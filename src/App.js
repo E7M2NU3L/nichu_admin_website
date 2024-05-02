@@ -1,24 +1,53 @@
-import logo from './logo.svg';
-import './App.css';
+import {BrowserRouter, Routes, Route} from 'react-router-dom'
+import LoginAdmin from './components/AuthComponents/LoginAdmin';
+import Webinars from './pages/Webinars/Webinars';
+import CreateWebinars from './pages/Webinars/CreateWebinars';
+import Courses from './pages/Courses/Courses';
+import { CreateCourse } from './pages/Courses/CreateCourse';
+import Instructors from './pages/Instructors/Instructors';
+import CreateInstructors from './pages/Instructors/CreateInstructors';
+import AdminHome from './pages/Auth/AdminHome';
+import AdminUsers from './components/AuthComponents/AdminUsers';
+import FooterUtil from './utils/Footer/FooterUtil';
+import NavbarUtil from './utils/Navbar/NavbarUtil';
+import Home from './pages/Home/Home';
+import Dashboard from './pages/Dashboard/Dashboard';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      {/* Admin Routes */}
+      <BrowserRouter>
+      <NavbarUtil />
+        <Routes>
+
+          <Route path='/' element={<Home />} />
+          
+          {/* Courses Routes */}
+          <Route path='/admin/course' element={<Courses />} />
+          <Route path='/admin/course/create-course' element={<CreateCourse />}/>
+
+
+          {/* Instructors Routes */}
+          <Route path='/admin/instructor' element={<Instructors />} />
+          <Route path='/admin/instructor/create-instructor' element={<CreateInstructors />} />
+
+
+          {/* Users Routes */}
+          <Route path='/admin/users' element={<AdminHome />}  />
+          <Route path='/admin/view-all-users' element={<AdminUsers />} />
+
+          {/* Webinars Routes */}
+          <Route path='/admin/webinars' element={<Webinars />} />
+          <Route path='/admin/webinars/create-webinars' element={<CreateWebinars />} />
+
+          {/* Admin Login Route */}
+          <Route path='/admin/auth/login' element={<LoginAdmin />} />
+          <Route path='/admin/dashboard' element={<Dashboard />} />
+        </Routes>
+        <FooterUtil />
+      </BrowserRouter>
+    </>
   );
 }
 

@@ -1,0 +1,22 @@
+.modal {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 13px;
+    color: #333;
+    font-family: sans-serif;
+    line-height: 1.5;
+    max-width: 70%;
+    padding: 3rem 2rem;
+}
+.modal a {
+    color: #bf0222;
+}
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+    .modal {
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        background-color: rgba(255, 255, 255, 0.5);
+   }
+    .warning {
+        display: none;
+   }
+}

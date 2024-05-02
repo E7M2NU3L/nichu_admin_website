@@ -1,0 +1,102 @@
+.dropzone {
+    border: 2px dashed #007bff;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-bottom: 20px;
+  }
+  
+  .dropzone.active {
+    border-color: #28a745;
+  }
+  
+  .preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .preview-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .preview-item img {
+    max-width: 100px;
+    max-height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+  
+  .preview-item button {
+    margin-top: 5px;
+    padding: 5px 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  form {
+    background-color: #ffffff; /* Adjust form background color */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adjust the max width as desired */
+  }
+
+  /* Form fields */
+.form-control,
+.text-field {
+  width: 100%; /* Make form fields full width */
+  margin-bottom: 15px; /* Add space between fields */
+}
+
+/* Form control styling */
+.form-control .select {
+  width: 100%; /* Make select dropdown full width */
+  margin-bottom: 15px;
+}
+
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+    form {
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        background-color: rgba(255, 255, 255, 0.5);
+   }
+    .warning {
+        display: none;
+   }
+}
+
+.progress-bar {
+  width: 100%;
+  height: 10px; /* Adjust the height as desired */
+  background-color: #e0e0e0; /* Light grey background */
+  border-radius: 5px;
+  margin-top: 5px;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 5px;
+  margin: 1rem 0;
+  transition: width 0.3s ease, background-color 0.3s ease; /* Smooth transition */
+  background-color: #007bff; /* Initial color for the fill */
+}
+
+.progress-fill.complete {
+  background-color: #28a745; /* Green color when completed */
+}
+
+.uploaded-file {
+  margin: 1rem 0;
+}
+
+.remove-button {
+  margin-top: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
