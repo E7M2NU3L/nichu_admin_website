@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import ProfilePlace from '../../assets/images/profile.png'
 import { Button, Input, Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
-import { Block, Edit, EditAttributes, Logout, Update } from '@mui/icons-material'
+import { Block, Edit, EditAttributes, Update, UpdateSharp } from '@mui/icons-material'
 
 const Profile = () => {
     const [EditMode, setEditMode] = useState(false);
@@ -92,7 +92,7 @@ const Profile = () => {
                             </Button>
 
                             <Button className="bg-dark-5 hover:bg-dark-4 text-dark-1 hover:text-dark-1 transition-colors duration-300 ease-in-out gap-x-[9px]" variant="contained" onClick={handleLogout} disabled={true} >
-                               <Block />  Logout
+                               <Block /> Update Password
                             </Button>
                             </section>
                             </main>
@@ -135,7 +135,7 @@ const Profile = () => {
                             </Button>
 
                             <Button className="bg-dark-5 hover:bg-dark-4 text-dark-1 hover:text-dark-1 transition-colors duration-300 ease-in-out gap-x-[9px]" variant="contained" onClick={handleLogout}>
-                               <Logout />  Logout
+                               <UpdateSharp />  Update Password
                             </Button>
                             </section>
                             </main>

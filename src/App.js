@@ -5,13 +5,13 @@ import CreateWebinars from './pages/Webinars/CreateWebinars';
 import Courses from './pages/Courses/Courses';
 import { CreateCourse } from './pages/Courses/CreateCourse';
 import Instructors from './pages/Instructors/Instructors';
-import CreateInstructors from './pages/Instructors/CreateInstructors';
 import AdminHome from './pages/Auth/AdminHome';
 import AdminUsers from './components/AuthComponents/AdminUsers';
 import FooterUtil from './utils/Footer/FooterUtil';
 import NavbarUtil from './utils/Navbar/NavbarUtil';
 import Home from './pages/Home/Home';
 import Dashboard from './pages/Dashboard/Dashboard';
+import CreateInstructor from './pages/Instructors/CreateInstructors';
 
 function App() {
   return (
@@ -30,7 +30,7 @@ function App() {
 
           {/* Instructors Routes */}
           <Route path='/admin/instructor' element={<Instructors />} />
-          <Route path='/admin/instructor/create-instructor' element={<CreateInstructors />} />
+          <Route path='/admin/instructor/create-instructor' element={<CreateInstructor />} />
 
 
           {/* Users Routes */}

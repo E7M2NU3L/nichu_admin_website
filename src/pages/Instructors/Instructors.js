@@ -1,6 +1,7 @@
-import { Typography } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 import React from 'react'
 import CoursePage from '../../assets/images/images (5).png'
+import { Link } from 'react-router-dom'
 
 const Instructors = () => {
   return (
@@ -18,8 +19,12 @@ const Instructors = () => {
         <img src={CoursePage} alt='users-section'  className='w-[10rem] h-[12rem]'/>
       </section>
 
-      <section>
-        
+      <section className='w-full justify-end flex px-[1rem]'>
+        <Button variant='contained'>
+          <Link to="/admin/instructor/create-instructor">
+            Create a Webinar
+          </Link>
+        </Button>
       </section>
     </div>
   )
