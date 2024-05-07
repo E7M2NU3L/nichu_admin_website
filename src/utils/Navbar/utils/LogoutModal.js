@@ -3,11 +3,12 @@ import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { Logout } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import authService from '../../api/auth/Auth';
+import authService from '../../../api/auth/Auth';
+import { useDispatch, useSelector } from 'react-redux';
+import { AuthStatus } from '../../../slice/authSlice';
+import {logout} from '../../../slice/authSlice'
 
 const style = {
   position: 'absolute',
@@ -27,14 +28,26 @@ export default function LogoutModal() {
   const handleClose = () => setOpen(false);
   const navigate = useNavigate();
 
+  const logoutStatus = useSelector(AuthStatus);
+  console.log(logoutStatus);
+
+  const dispatch = useDispatch();
+
   const handleLogout = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await authService.logout();
-      console.log(response);
-      console.log("The Logout has been successfull");
-      navigate('/')
+      // response data
+        await authService.logout();
+        dispatch(
+            logout({
+                authentication: false,
+                userData: null
+            })
+        )  
+        console.log("The Logout has been successfull");
+        navigate('/')
+        handleClose();
     } catch (error) {
       console.log(error.message);
       handleClose();
@@ -43,12 +56,9 @@ export default function LogoutModal() {
 
   return (
     <div>
-      <Button onClick={handleOpen} className='flex justify-between items-center w-full'>
-        <Logout className='text-dark-2 hover:text-dark-3 transition-all duration-300 ease-in-out' />
-        <Typography className='text-dark-2 font-semibold capitalize hidden sm:block ps-[1.4rem]'>
+        <button className='text-md text-dark-1 bg-dark-3 px-2 py-1 rounded-lg shadow-md font-semibold hover:translate-x-1 hover:bg-dark-4 hover:scale-105 transition-all duration-300 ease-in-out' onClick={handleOpen}>
             Logout
-        </Typography>
-    </Button>
+        </button> 
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"

@@ -19,6 +19,7 @@ import { UpdateCourses } from './components/CoursesComponents/UpdateCourses';
 import UpdateWebinar from './components/WebinarComponents/UpdateWebinar';
 import UpdateInstructor from './components/InstructorComponents/UpdateInstructor';
 import IsAdmin from './state/IsAdmin';
+import Protected from './middleware/Protected';
 
 function App() {
   return (
@@ -37,30 +38,70 @@ function App() {
               <Create />
             </IsAdmin>
           }/>
-          <Route path='/admin/course/single' element={<FetchSingleCourses />} />
-          <Route path='/admin/course/update' element={<UpdateCourses />} />
+          <Route path='/admin/course/single' element={
+          <IsAdmin>
+            <FetchSingleCourses />
+          </IsAdmin>
+          } />
+          <Route path='/admin/course/update' element={
+          <isAdmin>
+            <UpdateCourses />
+          </isAdmin>
+          } />
 
 
           {/* Instructors Routes */}
           <Route path='/admin/instructor' element={<Instructors />} />
-          <Route path='/admin/instructor/create-instructor' element={<CreateI />} />
-          <Route path="/admin/instructors/single" element={<FetchSingleInstructor />} />
-          <Route path='/admin/instructor/update' element={<UpdateInstructor />} />
+          <Route path='/admin/instructor/create-instructor' element={
+          <IsAdmin>
+            <CreateI />
+          </IsAdmin>
+          } />
+          <Route path="/admin/instructors/single" element={
+          <IsAdmin>
+            <FetchSingleInstructor />
+          </IsAdmin>
+          } />
+          <Route path='/admin/instructor/update' element={
+          <isAdmin>
+            <UpdateInstructor />
+          </isAdmin>
+          } />
 
 
           {/* Users Routes */}
           <Route path='/admin/users' element={<AdminHome />}  />
-          <Route path='/admin/view-all-users' element={<AdminUsers />} />
+          <Route path='/admin/view-all-users' element={
+          <IsAdmin>
+            <AdminUsers />
+          </IsAdmin>
+          } />
 
           {/* Webinars Routes */}
           <Route path='/admin/webinars' element={<Webinars />} />
-          <Route path='/admin/webinars/create-webinars' element={<CreateWebinars />} />
-          <Route path="/admin/webinar/edit" element={<FetchSingleWebinar />} />
-          <Route path='/admin/webinar/update' element={<UpdateWebinar />} />
+          <Route path='/admin/webinars/create-webinars' element={
+          <IsAdmin>
+            <CreateWebinars />
+          </IsAdmin>
+          } />
+          <Route path="/admin/webinar/edit" element={
+          <IsAdmin>
+            <FetchSingleWebinar />    
+          </IsAdmin>
+          } />
+          <Route path='/admin/webinar/update' element={
+          <IsAdmin>
+            <UpdateWebinar />  
+          </IsAdmin>
+          } />
 
           {/* Admin Login Route */}
           <Route path='/admin/auth/login' element={<LoginAdmin />} />
-          <Route path='/admin/dashboard' element={<Dashboard />} />
+          <Route path='/admin/dashboard' element={
+          <Protected>
+            <Dashboard />
+          </Protected>
+          } />
         </Routes>
         <FooterUtil />
       </BrowserRouter>

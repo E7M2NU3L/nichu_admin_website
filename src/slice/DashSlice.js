@@ -1,15 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
+import PlaceHolder from '../assets/images/profile.png'
 
-const initialState = [
-
-];
+const initialState = {
+    profileImage: PlaceHolder,
+    Username: '',
+    UserEmail: '',
+    Status: ''
+};
 
 const DashSlice = createSlice({
     name: "dashboard",
     initialState,
     reducers: {
-        change: {
-
+        update: (state, action) => {
+            
         }
     }
 })

@@ -17,7 +17,6 @@ export class AuthService {
 
     async signup({username, email, password}){
         try {
-
             // return promise
             const promise = await this.account.create(
                 ID.unique(),
@@ -27,16 +26,20 @@ export class AuthService {
             )
 
             if (promise) {
-                const creation = await authDB.CreateUserInfo({
+                const creation = await this.Login({
                     email,
-                    username,
                     password
                 });
                 console.log(creation);
-                return [promise, creation]
+                return creation;
             }
             else {
-                return false
+                const promise = await authDB.CreateUserInfo({                    
+                    email,
+                    password,
+                    username
+                });
+                console.log(promise);
             }
         } catch (error) {
             console.log("Error Occured: ", error.message);

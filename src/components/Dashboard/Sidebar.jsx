@@ -5,21 +5,6 @@ import { Link } from 'react-router-dom';
 import LogoutModal from '../AuthComponents/LogoutModal';
 
 const Sidebar = () => {
-    const AdminList = [
-       ,
-        <Logout className='text-dark-2 hover:text-dark-3 transition-all duration-300 ease-in-out' />
-    ];
-    
-    const Adminlabels = ['Profile', 'Logout'];
-    const links = [, '/admin/auth/logout']
-    
-    const adminArrayOfObjects = Adminlabels.map((label, index) => ({
-        text: label,
-        Icon: AdminList[index],
-        link: links[index]
-    }));
-
-    
   return (
     <div>
         <Box
@@ -39,7 +24,7 @@ const Sidebar = () => {
             </ListItem>
           </Link>
 
-          <ListItem className='w-full'>
+          <ListItem className=''>
               <LogoutModal />
           </ListItem>
           </React.Fragment>

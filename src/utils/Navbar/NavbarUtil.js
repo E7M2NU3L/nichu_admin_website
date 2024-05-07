@@ -1,10 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './main.css'
 import Logo from '../../assets/images/images (6).png'
 import { Link } from 'react-router-dom'
 import DrawerRight from './utils/DrawerRight'
+import LogoutModal from './utils/LogoutModal'
+import { useSelector } from 'react-redux'
+import { AuthStatus } from '../../slice/authSlice'
 
 const NavbarUtil = () => {
+
+  const loginStatus = useSelector(AuthStatus);
+  const auth = loginStatus.authentication;
+
   return (
     <div className='flex justify-between items-center w-full min-h-[10vh] bg-dark-1 px-4'>
       <Link to="/">
@@ -41,11 +48,21 @@ const NavbarUtil = () => {
 
       
     <div className='rounded-lg sm:flex justify-around items-center gap-x-[1rem] hidden '>
-       <button className='text-md text-dark-1 bg-dark-3 px-2 py-1 rounded-lg shadow-md font-semibold hover:translate-x-1 hover:bg-dark-4 hover:scale-105 transition-all duration-300 ease-in-out'>
-        <Link to="/admin/auth/login">
-          Login
-        </Link>
-      </button> 
+       <>
+        {(auth) ? (
+          <React.Fragment>
+            <LogoutModal />
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            <button className='text-md text-dark-1 bg-dark-3 px-2 py-1 rounded-lg shadow-md font-semibold hover:translate-x-1 hover:bg-dark-4 hover:scale-105 transition-all duration-300 ease-in-out'>
+              <Link to="/admin/auth/login">
+                Login
+              </Link>
+            </button> 
+          </React.Fragment>
+        )}
+       </>
 
       <h1 className='text-md text-dark-4 font-bold hover:text-dark-4 hover:translate-x-1 hover:scale-105 transition-all duration-300 ease-in-out'>
         <Link to="/admin/dashboard">

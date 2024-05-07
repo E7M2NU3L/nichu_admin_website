@@ -23,7 +23,7 @@ const Instructors = () => {
       <section className='w-full justify-end flex px-[1rem]'>
         <Button variant='contained'>
           <Link to="/admin/instructor/create-instructor">
-            Create a Webinar
+            Enroll Instructors
           </Link>
         </Button>
       </section>

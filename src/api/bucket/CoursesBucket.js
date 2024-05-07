@@ -6,13 +6,10 @@ export class CourseBucketService {
     bucket;
 
     constructor(){
-        this.client.setEndpoint(
-            configURL.appwrite_connection_url
-        ).setProject(
-            configURL.appwrite_connection_id
-        );
+        this.client.setEndpoint("https://cloud.appwrite.io/v1");
+        this.client.setProject("65ec15ae94b048c5b098");
 
-        this.bucket = new Storage(this.client);
+        this.bucket =  new Storage(this.client);
     }
 
     async CreateCourseThumbnail(file){

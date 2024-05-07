@@ -2,6 +2,8 @@ import { Button, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authService from '../../api/auth/Auth';
+import { useDispatch } from 'react-redux';
+import {login} from '../../slice/authSlice'
 
 const LoginAdmin = () => {
     const navigate = useNavigate();
@@ -20,18 +22,25 @@ const LoginAdmin = () => {
         }));
     };
 
+    // state management
+    const dispatch = useDispatch();
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const { email, username, password } = formData;
-            const userName = username;
-            console.log("Hello user: ",userName);
-
-            console.log(email, username, password);
-            const response = await authService.signup({
+            
+            const response = await authService.Login({
               username, email, password
             });
+            console.log(response);
             if (response) {
+                dispatch(
+                    login({
+                        authentication: true,
+                        userData: response
+                    })
+                )
                 console.log("Login successful");
                 navigate('/');
             } else {
