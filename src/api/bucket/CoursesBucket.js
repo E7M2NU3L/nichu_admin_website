@@ -1,5 +1,5 @@
 import { Client, ID, Storage } from "appwrite";
-import { configURL } from "../config/Conf";
+import { configURL } from "../../config/Conf";
 
 export class CourseBucketService {
     client = new Client();

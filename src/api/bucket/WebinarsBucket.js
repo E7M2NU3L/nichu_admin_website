@@ -1,5 +1,5 @@
 import { Client, Storage, ID } from "appwrite";
-import { configURL } from "../config/Conf";
+import { configURL } from "../../config/Conf";
 
 export class WebinarBucketService {
     client = new Client();

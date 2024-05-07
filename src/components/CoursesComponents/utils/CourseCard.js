@@ -1,7 +1,9 @@
 import React from 'react'
-import imagePlace from '../../assets/images/course.jpg'
+import imagePlace from '../../../assets/images/course.jpg'
 import { HotTub } from '@mui/icons-material'
 import { Rating, Typography } from '@mui/material'
+import { Link } from 'react-router-dom'
+import DeleteCourses from '../DeleteCourses'
 
 const CourseCard = () => {
   return (
@@ -36,11 +38,14 @@ const CourseCard = () => {
                 Welcome to "Introduction to Web Development," a comprehensive course designed for beginners looking to dive into the world of web development.
             </Typography>
 
-            <div className='py-2'>
+            <div className='py-2 justify-between px-3 flex items-center w-full'>
+                <Link to="/admin/course/single" >
                 <button className='flex bg-dark-4 text-dark-1 font-semibold px-4 py-1 rounded-lg hover:bg-dark-2 hover:scale-110 
                 hover:translate-x-2 transition-all duration-200 ease-in-out'>
                 View
                 </button>
+                </Link>
+                <DeleteCourses />
             </div>
             </section>
         </section>

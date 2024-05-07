@@ -1,8 +1,9 @@
 import { FunctionsTwoTone, HotTub, Timelapse } from '@mui/icons-material'
 import { Divider, Typography } from '@mui/material'
 import React from 'react'
-import imagePlace from '../../assets/images/course.jpg'
+import imagePlace from '../../../assets/images/course.jpg'
 import { Link } from 'react-router-dom'
+import DeleteWebinar from '../DeleteWebinar'
 
 const WebinarCard = () => {
   return (
@@ -35,13 +36,15 @@ const WebinarCard = () => {
                 Welcome to "Introduction to Web Development," a comprehensive course designed for beginners looking to dive into the world of web development.
             </Typography>
 
-            <div className='py-2'>
+            <div className='py-2 justify-between items-center px-3 flex w-full'>
                 <Link className='' to="/admin/webinar/edit">
                     <button className='flex bg-dark-4 text-dark-1 font-semibold px-4 py-1 rounded-lg hover:bg-dark-2 hover:scale-110 
                     hover:translate-x-2 transition-all duration-200 ease-in-out'>
                         View
                 </button>
                 </Link>
+
+                <DeleteWebinar />
             </div>
             </section>
         </section>

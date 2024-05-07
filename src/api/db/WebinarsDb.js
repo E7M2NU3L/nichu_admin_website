@@ -1,6 +1,6 @@
 import { Client, Databases, ID } from "appwrite";
-import { configURL } from "../config/Conf";
-import webinarBucket from "./WebinarsBucket";
+import { configURL } from "../../config/Conf";
+import webinarBucket from "../bucket/WebinarsBucket";
 
 export class WebinarDBService{
     client = new Client();

@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import './main.css'; // Import a separate CSS file for styling
 import { Typography } from '@mui/material';
 
-const CourseVideos = () => {
+const CourseVids = () => {
   const [files, setFiles] = useState([]);
   const [uploadProgress, setUploadProgress] = useState({}); // State to track upload progress
 
@@ -103,4 +103,4 @@ const CourseVideos = () => {
   );
 };
 
-export default CourseVideos;
+export default CourseVids;

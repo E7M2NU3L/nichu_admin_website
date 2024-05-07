@@ -2,7 +2,7 @@ import { Button, Typography } from '@mui/material'
 import React from 'react'
 import CoursePage from '../../assets/images/images (5).png'
 import { Link } from 'react-router-dom'
-import CourseCard from './CourseCard'
+import FetchAllCourses from '../../components/CoursesComponents/FetchAllCourses'
 
 const Courses = () => {
   return (
@@ -28,13 +28,7 @@ const Courses = () => {
         </Button>
       </section>
 
-      <section className='w-full flex flex-row justify-around items-center flex-wrap px-[1rem] gap-y-[1rem]'>
-        <CourseCard />
-        <CourseCard />
-        <CourseCard />
-        <CourseCard />
-        <CourseCard />
-      </section>
+      <FetchAllCourses />
     </div>
   )
 }

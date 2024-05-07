@@ -1,18 +1,14 @@
 import { Client, Databases, ID } from "appwrite";
-import { configURL } from "../config/Conf";
-import authBucket from "./AuthBucket";
+import { configURL } from "../../config/Conf";
+import authBucket from "../bucket/AuthBucket";
 
 export class AuthDBService {
     client = new Client();
     database;
 
     constructor(){
-        this.client.setEndpoint(
-            configURL.appwrite_connection_url
-        ).setProject(
-            configURL.appwrite_connection_id
-        )
-
+        this.client.setEndpoint("https://cloud.appwrite.io/v1");
+        this.client.setProject("65ec15ae94b048c5b098");
         this.database = new Databases(this.client);
     }
 
@@ -23,8 +19,8 @@ export class AuthDBService {
     }){
         try {
             const promise = await this.database.createDocument(
-                configURL.appwrite_db_ID,
-                configURL.appwrite_users_collection_id,
+                "65ec182e15ec8ffdec9d",
+                "65ec184a65550085f404",
                 ID.unique(),
                 {
                     user_email,

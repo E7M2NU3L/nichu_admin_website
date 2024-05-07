@@ -2,6 +2,7 @@ import { Button, Typography } from '@mui/material'
 import React from 'react'
 import CoursePage from '../../assets/images/images (5).png'
 import { Link } from 'react-router-dom'
+import FetchAllInstructor from '../../components/InstructorComponents/FetchAllInstructor'
 
 const Instructors = () => {
   return (
@@ -26,6 +27,9 @@ const Instructors = () => {
           </Link>
         </Button>
       </section>
+      
+      <FetchAllInstructor />
+      
     </div>
   )
 }

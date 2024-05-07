@@ -1,6 +1,6 @@
 import { Client , Databases, ID } from "appwrite";
-import { configURL } from "../config/Conf";
-import InstructorService from "./InstructorBucket";
+import { configURL } from "../../config/Conf";
+import InstructorService from "../bucket/InstructorBucket";
 
 export class InstructorDBService{
     client = new Client();

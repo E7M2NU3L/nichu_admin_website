@@ -3,8 +3,11 @@ import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
+import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import { Logout } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import authService from '../../api/auth/Auth';
 
 const style = {
   position: 'absolute',
@@ -18,30 +21,34 @@ const style = {
   p: 4,
 };
 
-export default function DeleteWebinar() {
+export default function LogoutModal() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
   const navigate = useNavigate();
 
-  const handleDelete = (e) => {
+  const handleLogout = async (e) => {
+    e.preventDefault();
+
     try {
-      console.log("The Course has been Successfully Deleted")
-      navigate('/admin/course')
-      handleClose();
+      const response = await authService.logout();
+      console.log(response);
+      console.log("The Logout has been successfull");
+      navigate('/')
     } catch (error) {
       console.log(error.message);
-      navigate('/')
+      handleClose();
     }
   }
 
   return (
     <div>
-      <button className='flex bg-red-400 text-dark-1 font-semibold px-4 py-1 rounded-lg hover:bg-red-600 hover:text-white hover:scale-110 
-                hover:translate-x-2 transition-all duration-200 ease-in-out' onClick={handleOpen}>
-                Remove
-      </button>
+      <Button onClick={handleOpen} className='flex justify-between items-center w-full'>
+        <Logout className='text-dark-2 hover:text-dark-3 transition-all duration-300 ease-in-out' />
+        <Typography className='text-dark-2 font-semibold capitalize hidden sm:block ps-[1.4rem]'>
+            Logout
+        </Typography>
+    </Button>
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -58,15 +65,15 @@ export default function DeleteWebinar() {
         <Fade in={open}>
           <Box sx={style} className="rounded-lg shadow-md shadow-dark-4">
             <Typography id="transition-modal-title" className='font-semibold text-dark-1' variant="h6" component="h2">
-              Are You Sure You want to remove the Webinar?
+              Are You Sure You want to Logout?
             </Typography>
             <section className='flex justify-around mt-[1rem] items-center w-full'>
                 <button className='bg-green-400 text-dark-1 px-2 py-1 rounded-lg hover:translate-x-1 hover:scale-110 hover:bg-gradient-to-tr hover:from-dark-2 hover:to-dark-4 hover:text-dark-1 transition-all duration-300 ease-in-out' onClick={handleClose}>
                     Cancel
                 </button>
-
-                <button className='bg-red-500 text-dark-1 px-2 py-1 rounded-lg hover:translate-x-1 hover:scale-110 hover:bg-gradient-to-tr hover:from-dark-2 hover:to-dark-4 hover:text-dark-1 transition-all duration-300 ease-in-out' onClick={handleDelete}>
-                    Delete
+            
+                <button className='bg-red-500 text-dark-1 px-2 py-1 rounded-lg hover:translate-x-1 hover:scale-110 hover:bg-gradient-to-tr hover:from-dark-2 hover:to-dark-4 hover:text-dark-1 transition-all duration-300 ease-in-out' onClick={handleLogout}>
+                    Logout
                 </button>
             </section>
           </Box>

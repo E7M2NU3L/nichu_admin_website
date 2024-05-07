@@ -1,25 +1,22 @@
 import { Client, Databases, ID } from "appwrite";
-import { configURL } from "../config/Conf";
-import CourseBucket from "./CoursesBucket";
+import { configURL } from "../../config/Conf";
+import CourseBucket from "../bucket/CoursesBucket";
 
 export class CourseDatabaseService {
     client = new Client();
     database;
 
     constructor(){
-        this.client.setEndpoint(
-            configURL.appwrite_connection_url
-            ).setProject(
-            configURL.appwrite_connection_id
-        )
+        this.client.setEndpoint("https://cloud.appwrite.io/v1");
+         this.client.setProject("65ec15ae94b048c5b098");
         this.database = new Databases(this.client);
     }
 
     async ListAllCourses(){
         try {
             const promise = await this.database.listDocuments(
-                configURL.appwrite_db_ID,
-                configURL.appwrite_courses_collection_id,
+                "65ec182e15ec8ffdec9d",
+                "65ec18d41448ef512152",
                 []
             )
 
@@ -33,8 +30,8 @@ export class CourseDatabaseService {
     async ListCourse(slug){
         try {
             const promise = await this.database.getDocument(
-                configURL.appwrite_db_ID,
-                configURL.appwrite_courses_collection_id,
+                "65ec182e15ec8ffdec9d",
+                "65ec18d41448ef512152",
                 slug
             )
             return promise;
@@ -54,8 +51,8 @@ export class CourseDatabaseService {
     }){
         try {
             const promise = await this.database.createDocument(
-                configURL.appwrite_db_ID,
-                configURL.appwrite_courses_collection_id,
+                "65ec182e15ec8ffdec9d",
+                "65ec18d41448ef512152",
                 ID.unique(),
                 {
                     Course_name, 
@@ -86,8 +83,8 @@ export class CourseDatabaseService {
     }){
         try {
             const promise = await this.database.updateDocument(
-                configURL.appwrite_db_ID,
-                configURL.appwrite_courses_collection_id,
+                "65ec182e15ec8ffdec9d",
+                "65ec18d41448ef512152",
                 slug,
                 {
                     Course_name, 
@@ -108,8 +105,8 @@ export class CourseDatabaseService {
     async DeleteCourse(slug){
         try {
             await this.database.deleteDocument(
-                configURL.appwrite_db_ID,
-                configURL.appwrite_courses_collection_id,
+                "65ec182e15ec8ffdec9d",
+                "65ec18d41448ef512152",
                 slug
             )
         } catch (error) {
@@ -121,8 +118,8 @@ export class CourseDatabaseService {
     async FilterCourse(query){
         try {
             const promise = await this.database.listDocuments(
-                configURL.appwrite_db_ID,
-                configURL.appwrite_courses_collection_id,
+                "65ec182e15ec8ffdec9d",
+                "65ec18d41448ef512152",
                 query
             )
             return promise;

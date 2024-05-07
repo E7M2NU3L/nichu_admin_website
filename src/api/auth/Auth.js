@@ -1,7 +1,7 @@
 import {Account, Client, Databases, ID} from 'appwrite';
-import { configURL } from '../config/Conf';
-import { AuthConfig } from '../config/AuthConf';
-import authDB from './AuthDb';
+import authDB from '../db/AuthDb';
+import { configURL } from '../../config/Conf';
+import { AuthConfig } from '../../config/AuthConf';
 
 export class AuthService {
     client = new Client();
@@ -9,22 +9,14 @@ export class AuthService {
     database;
 
     constructor(){
-        this.client.setEndpoint(configURL.appwrite_connection_url);
-        this.client.setProject(configURL.appwrite_connection_id);
+        this.client.setEndpoint("https://cloud.appwrite.io/v1");
+        this.client.setProject("65ec15ae94b048c5b098");
         this.account = new Account(this.client);
         this.database = new Databases(this.client);
     }
 
     async signup({username, email, password}){
         try {
-
-            // checking if the user is admin
-            const userIchu = AuthConfig.username
-            const emailNichu = AuthConfig.email
-            const passwordNichu = AuthConfig.password
-            if(username !== userIchu && passwordNichu !== password && emailNichu !== email){
-                return false;
-            }
 
             // return promise
             const promise = await this.account.create(
@@ -35,16 +27,16 @@ export class AuthService {
             )
 
             if (promise) {
-                return this.Login({
-                    email, password
-                })
-            }
-            else {
-                return authDB.CreateUserInfo({
+                const creation = await authDB.CreateUserInfo({
                     email,
                     username,
                     password
                 });
+                console.log(creation);
+                return [promise, creation]
+            }
+            else {
+                return false
             }
         } catch (error) {
             console.log("Error Occured: ", error.message);
@@ -54,15 +46,18 @@ export class AuthService {
 
     async Login({email, password}){
         try {
-             // checking if the user is admin
-             const emailNichu = AuthConfig.email
-             const passwordNichu = AuthConfig.password
-             if(passwordNichu !== password && emailNichu !== email){
-                 return false;
-             }
+            
+            // handle empty details
+            if (!email && !password) {
+                console.log("The input fields are not filled in properly")
+            }
 
-             // get the promise
+            console.log("Email: ",email);
+            console.log("password: ", password);
+            
+            // get the promise
             const promise = await this.account.createEmailPasswordSession(email, password);
+
             return promise;
         } catch (error) {
             console.log("Error Occured: ", error.message);
@@ -72,7 +67,8 @@ export class AuthService {
 
     async logout(){
         try {
-            await this.account.deleteSessions();
+            const response = await this.account.deleteSessions();
+            return response;
         } catch (error) {
             console.log("Error Occured: ", error.message);
             return false;

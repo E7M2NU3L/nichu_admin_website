@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import ProfilePlace from '../../assets/images/profile.png'
 import { Button, Input, Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
-import { Block, Edit, EditAttributes, Update, UpdateSharp } from '@mui/icons-material'
+import { Block, Delete, Edit, EditAttributes, Update } from '@mui/icons-material'
+import ProfileUpload from './utils/ProfileUpload'
 
 const Profile = () => {
     const [EditMode, setEditMode] = useState(false);
@@ -52,17 +53,8 @@ const Profile = () => {
             <>
                 {EditMode ? (
                     <React.Fragment>
-                        <section>
-                            <Button className='relative'>
-                                <img src={ProfilePlace} alt='placeholder' className='h-[10rem] w-[8rem] rounded-full mt-[1rem] mb-[3px] relative object-contain' />
-
-                                <div cclassName='absolute inset-0'>
-                                    <EditAttributes />
-                                    <Typography>
-                                        Edit Profile
-                                    </Typography>
-                                </div>
-                            </Button>
+                        <section className='px-2'>
+                            <ProfileUpload />
                         </section>
 
                         <section className='gap-y-[1rem]'>
@@ -92,7 +84,7 @@ const Profile = () => {
                             </Button>
 
                             <Button className="bg-dark-5 hover:bg-dark-4 text-dark-1 hover:text-dark-1 transition-colors duration-300 ease-in-out gap-x-[9px]" variant="contained" onClick={handleLogout} disabled={true} >
-                               <Block /> Update Password
+                               <Block /> Delete
                             </Button>
                             </section>
                             </main>
@@ -101,7 +93,7 @@ const Profile = () => {
                 ) : (
                     <React.Fragment>
                         <section>
-                            <img src={ProfilePlace} alt='placeholder' className='h-[10rem] w-[8rem] rounded-full hover:bg-gray-400 mt-[1rem] mb-[3px]' />
+                            <img src={ProfilePlace} alt='placeholder' className='h-[10rem] w-[8rem] rounded-full hover:scale-105 transition-all duration-150 ease-in-out mt-[1rem] mb-[3px]' />
                         </section>
 
                         <section className='gap-y-[1rem]'>
@@ -135,7 +127,7 @@ const Profile = () => {
                             </Button>
 
                             <Button className="bg-dark-5 hover:bg-dark-4 text-dark-1 hover:text-dark-1 transition-colors duration-300 ease-in-out gap-x-[9px]" variant="contained" onClick={handleLogout}>
-                               <UpdateSharp />  Update Password
+                               <Delete /> Delete
                             </Button>
                             </section>
                             </main>

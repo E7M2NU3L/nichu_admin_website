@@ -1,21 +1,18 @@
 import { Client, ID, Storage } from "appwrite";
-import { configURL } from "../config/Conf";
+import { configURL } from "../../config/Conf";
 
-export class InstructorBucketService {
+export class AuthBucketService {
     client = new Client();
     bucket;
 
     constructor(){
-        this.client.setEndpoint(
-            configURL.appwrite_connection_url
-        ).setProject(
-            configURL.appwrite_connection_id
-        )
+        this.client.setEndpoint("https://cloud.appwrite.io/v1");
+        this.client.setProject("65ec15ae94b048c5b098");
 
         this.bucket =  new Storage(this.client);
     }
 
-    async CreateInstructorImage(file){
+    async CreateUserImage(file){
         try {
             const promise = await this.bucket.createFile(
                 configURL.appwrite_bucket_users_id,
@@ -29,7 +26,7 @@ export class InstructorBucketService {
         }
     }
 
-    async DeleteInstructorImage(slug){
+    async DeleteUserImage(slug){
         try {
             const promise = await this.bucket.deleteFile(
                 configURL.appwrite_bucket_users_id,
@@ -42,7 +39,7 @@ export class InstructorBucketService {
         }
     }
 
-    async GetInstructorImage(slug){
+    async GetUserImage(slug){
         try {
             const promise = await this.bucket.getFile(
                 configURL.appwrite_bucket_users_id,
@@ -55,7 +52,7 @@ export class InstructorBucketService {
         }
     }
 
-    async UpdateInstructorImage(slug , file) {
+    async UpdateUserImage(slug , file) {
         try {
             const promise = await this.bucket.updateFile(
                 configURL.appwrite_bucket_users_id,
@@ -68,10 +65,8 @@ export class InstructorBucketService {
             return false;
         }
     }
-
-    
 }
 
-const InstructorService = new InstructorBucketService();
+const authBucket = new AuthBucketService();
 
-export default InstructorService;
+export default authBucket;

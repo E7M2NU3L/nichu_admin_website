@@ -1,7 +1,7 @@
 import { Client, ID, Storage } from "appwrite";
-import { configURL } from "../config/Conf";
+import { configURL } from "../../config/Conf";
 
-export class AuthBucketService {
+export class InstructorBucketService {
     client = new Client();
     bucket;
 
@@ -15,7 +15,7 @@ export class AuthBucketService {
         this.bucket =  new Storage(this.client);
     }
 
-    async CreateUserImage(file){
+    async CreateInstructorImage(file){
         try {
             const promise = await this.bucket.createFile(
                 configURL.appwrite_bucket_users_id,
@@ -29,7 +29,7 @@ export class AuthBucketService {
         }
     }
 
-    async DeleteUserImage(slug){
+    async DeleteInstructorImage(slug){
         try {
             const promise = await this.bucket.deleteFile(
                 configURL.appwrite_bucket_users_id,
@@ -42,7 +42,7 @@ export class AuthBucketService {
         }
     }
 
-    async GetUserImage(slug){
+    async GetInstructorImage(slug){
         try {
             const promise = await this.bucket.getFile(
                 configURL.appwrite_bucket_users_id,
@@ -55,7 +55,7 @@ export class AuthBucketService {
         }
     }
 
-    async UpdateUserImage(slug , file) {
+    async UpdateInstructorImage(slug , file) {
         try {
             const promise = await this.bucket.updateFile(
                 configURL.appwrite_bucket_users_id,
@@ -72,6 +72,6 @@ export class AuthBucketService {
     
 }
 
-const authBucket = new AuthBucketService();
+const InstructorService = new InstructorBucketService();
 
-export default authBucket;
+export default InstructorService;
