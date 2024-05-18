@@ -1,19 +1,14 @@
 import { Client , Databases, ID } from "appwrite";
-import { configURL } from "../../config/Conf";
 import InstructorService from "../bucket/InstructorBucket";
 
 export class InstructorDBService{
     client = new Client();
-    databases;
+    database;
 
     constructor(){
-        this.client.setEndpoint(
-            configURL.appwrite_connection_url
-        ).setProject(
-            configURL.appwrite_connection_id
-        )
-
-        this.databases = new Databases(this.client);
+        this.client.setEndpoint("https://cloud.appwrite.io/v1");
+         this.client.setProject("65ec15ae94b048c5b098");
+        this.database = new Databases(this.client);
     }
 
     async createInstructor({
@@ -22,32 +17,50 @@ export class InstructorDBService{
         Instructor_Portfolio,
         Instructor_Linked_in,
         Instructor_IG,
-        Instructor_Photo
-    }){
+        Instructor_Photo,
+    }) {
         try {
-            const promise = await this.databases.createDocument(
-                configURL.appwrite_db_ID,
-                configURL.appwrite_instructor_collection_id,
+            console.log("From the api folder");
+            console.log("Database ID and Collection ID:", "65ec182e15ec8ffdec9d", "65ec1c68a1be3cdfa452");
+            console.log(
+                "Instructor Details:",
+                Instructor_Name,
+                Instructor_Description,
+                Instructor_Portfolio,
+                Instructor_Linked_in,
+                Instructor_IG,
+                Instructor_Photo
+            );
+    
+            // Ensure `databases` is properly initialized and available
+            if (!this.database) {
+                throw new Error("Databases object is not initialized");
+            }
+    
+            // Create document
+            const promise = await this.database.createDocument(
+                "65ec182e15ec8ffdec9d", // Database ID
+                "65ec1c68a1be3cdfa452", // Collection ID
                 ID.unique(),
                 {
-                    Instructor_Name, 
+                    Instructor_Name,
                     Instructor_Description,
                     Instructor_Portfolio,
                     Instructor_Linked_in,
                     Instructor_IG,
-                    Instructor_Photo: InstructorService.CreateInstructorImage(
-                        Instructor_Photo
-                    )
+                    Instructor_Photo: Instructor_Photo,
+                    Instructor_ID: ID.unique()
                 }
-            )
+            );
+    
+            console.log("Document created successfully:", promise);
             return promise;
         } catch (error) {
-            console.log(
-                "Error Creating the Instructor: ", error.message
-            );
+            console.log("Error Creating the Instructor:", error.message);
             return false;
         }
     }
+    
 
     async updateInstructor(slug, {
         Instructor_Name,
@@ -58,9 +71,9 @@ export class InstructorDBService{
         Instructor_Photo
     }){
         try {
-            const promise = await this.databases.updateDocument(
-                configURL.appwrite_db_ID,
-                configURL.appwrite_instructor_collection_id,
+            const promise = await this.database.updateDocument(
+                "65ec182e15ec8ffdec9d",
+                "65ec1c68a1be3cdfa452",
                 slug,
                 {
                     Instructor_Name, 
@@ -84,9 +97,9 @@ export class InstructorDBService{
 
     async FetchAllInstructors(){
         try {
-            const promise = await this.databases.listDocuments(
-                configURL.appwrite_db_ID,
-                configURL.appwrite_instructor_collection_id
+            const promise = await this.database.listDocuments(
+                "65ec182e15ec8ffdec9d",
+                "65ec1c68a1be3cdfa452",
             )
             return promise;
         } catch (error) {
@@ -99,9 +112,9 @@ export class InstructorDBService{
 
     async FetchSingleInstructor(slug){
         try {
-            const promise = await this.databases.getDocument(
-                configURL.appwrite_db_ID,
-                configURL.appwrite_instructor_collection_id,
+            const promise = await this.database.getDocument(
+                "65ec182e15ec8ffdec9d",
+                "65ec1c68a1be3cdfa452",
                 slug
             )
             return promise;
@@ -115,9 +128,9 @@ export class InstructorDBService{
 
     async DeleteInstructor(slug){
         try {
-            const promise = await this.databases.deleteDocument(
-                configURL.appwrite_db_ID,
-                configURL.appwrite_instructor_collection_id,
+            const promise = await this.database.deleteDocument(
+                "65ec182e15ec8ffdec9d",
+                "65ec1c68a1be3cdfa452",
                 slug
             )
             return promise;
@@ -131,9 +144,9 @@ export class InstructorDBService{
 
     async InstructorFilter(query){
         try {
-            const promise = await this.databases.listDocuments(
-                configURL.appwrite_db_ID,
-                configURL.appwrite_instructor_collection_id,
+            const promise = await this.database.listDocuments(
+                "65ec182e15ec8ffdec9d",
+                "65ec1c68a1be3cdfa452",
                 query
             )
             return promise;

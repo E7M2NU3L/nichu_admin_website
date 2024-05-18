@@ -1,28 +1,26 @@
 import { Client, Storage, ID } from "appwrite";
-import { configURL } from "../../config/Conf";
-
 export class WebinarBucketService {
     client = new Client();
     bucket;
 
     constructor(){
-        this.client.setEndpoint(
-            configURL.appwrite_connection_url
-        ).setProject(
-            configURL.appwrite_connection_id
-        );
+        this.client.setEndpoint("https://cloud.appwrite.io/v1");
+        this.client.setProject("65ec15ae94b048c5b098");
 
-        this.bucket = new Storage(this.client);
+        this.bucket =  new Storage(this.client);
     }
 
     async CreateWebinarThumbnail(file){
         try {
             const promise = await this.bucket.createFile(
-                configURL.appwrite_bucket_webinar_id,
+                "65ec1f75a350016f6f24",
                 ID.unique(),
                 file
             );
-            return promise;
+            // Construct the URL of the uploaded file
+            const fileURL = `https://cloud.appwrite.io/v1/storage/buckets/65ec1f81c5d56c259bf7/files/${promise.$id}/view?project=65ec15ae94b048c5b098`;
+
+            return fileURL;
         } catch (error) {
             console.log("Error creating file"+error.message);
             return false;
@@ -32,11 +30,14 @@ export class WebinarBucketService {
     async UpdateWebinarThumbnail(slug,file){
         try {
             const promise = await this.bucket.updateFile(
-                configURL.appwrite_bucket_webinar_id,
+                "65ec1f75a350016f6f24",
                 slug,
                 file
             );
-            return promise;
+            // Construct the URL of the uploaded file
+            const fileURL = `https://cloud.appwrite.io/v1/storage/buckets/65ec1f81c5d56c259bf7/files/${promise.$id}/view?project=65ec15ae94b048c5b098`;
+
+            return fileURL;
         } catch (error) {
             console.log("Error updating file"+error.message);
             return false;
@@ -46,7 +47,7 @@ export class WebinarBucketService {
     async DeleteWebinarThumbnail(slug){
         try {
             const promise = await this.bucket.deleteFile(
-                configURL.appwrite_bucket_webinar_id,
+                "65ec1f75a350016f6f24",
                 slug
             );
             return promise;
@@ -59,7 +60,7 @@ export class WebinarBucketService {
     async GetWebinarImagePreview(slug){
         try {
             const promise = await this.bucket.getFilePreview(
-                configURL.appwrite_bucket_webinar_id,
+                "65ec1f75a350016f6f24",
                 slug
             );
             return promise;

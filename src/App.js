@@ -84,12 +84,12 @@ function App() {
             <CreateWebinars />
           </IsAdmin>
           } />
-          <Route path="/admin/webinar/edit" element={
+          <Route path="/admin/webinar/edit/:id" element={
           <IsAdmin>
             <FetchSingleWebinar />    
           </IsAdmin>
           } />
-          <Route path='/admin/webinar/update' element={
+          <Route path='/admin/webinar/update/:id' element={
           <IsAdmin>
             <UpdateWebinar />  
           </IsAdmin>

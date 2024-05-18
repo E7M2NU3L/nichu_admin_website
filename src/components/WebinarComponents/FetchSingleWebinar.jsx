@@ -1,23 +1,52 @@
 import React, { useState, useEffect } from 'react';
 import { Typography } from '@mui/material';
-import axios from 'axios'; // Import axios or any other 
 import Loading from './utils/Loading';
-import PlaceHolder from '../../assets/images/images (3).png'
 import { Link } from 'react-router-dom';
+import webinarDB from '../../api/db/WebinarsDb';
+import { formatDistance } from 'date-fns';
 
-const FetchSingleWebinar = () => {
-    const [courseData, setCourseData] = useState(null);
+const FormattedDate = ( isoDate ) => {
+    try {
+        // Convert the ISO date string to a Date object
+        const date = new Date(isoDate);
+        
+        // Check if the date is valid
+        if (isNaN(date.getTime())) {
+            throw new Error('Invalid date format');
+        }
+
+        // Format the date relative to the current date
+        const formattedDate = formatDistance(date, new Date(), { addSuffix: true });
+        return formattedDate;
+    } catch (error) {
+        console.error(error.message);
+        return <span>Invalid date</span>;
+    }
+};
+
+const FetchSingleWebinar = ( ) => {
+    const [webinarData, setWebinarData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
     // Fetch course data based on the courseId
-    const fetchCourseData = async () => {
+    const fetchWebinarData = async () => {
         try {
-            // Replace the URL with your API endpoint for fetching course data
-            // const response = await axios.get(`http://api.example.com/courses/${courseId}`);
-            const response = {
-              data : 'success'
-            }
-            setCourseData(response.data);
+            // Get the current URL path from window.location.pathname
+            const urlPath = window.location.pathname;
+
+            // Split the path into an array of segments using the '/' separator
+            const pathSegments = urlPath.split('/');
+
+            // The last segment is the last part of the array
+            const id = pathSegments[pathSegments.length - 1];
+
+            // Output the extracted ID
+            console.log('Extracted ID:', id);
+            const response = await webinarDB.FetchSingleWebinars(
+                id
+            );
+            console.log(response);
+            setWebinarData(response);
         } catch (error) {
             console.error('Failed to fetch course data:', error);
         } finally {
@@ -27,59 +56,75 @@ const FetchSingleWebinar = () => {
 
     // Use effect to fetch course data when component mounts
     useEffect(() => {
-        fetchCourseData();
+        fetchWebinarData();
+        console.log(webinarData);
     }, []);
-
-    // Display loading spinner if data is still being fetched
-    if (isLoading) {
-        return <Loading />;
-    }
 
     // Render the course details once data is available
     return (
-        <div className='flex flex-col justify-center items-center w-full min-h-screen py-[1.4rem] bg-dark-2'>
-            <section>
-                <img
-                    src={PlaceHolder}
-                    alt='Course Thumbnail'
-                    className='max-w-[50rem] w-screen object-fill h-[30rem]'
-                />
-            </section>
+        <>
+            {(isLoading !== true && webinarData !== null) ? (
+                <React.Fragment>
+                    <div className='flex flex-col justify-center items-center w-full min-h-screen py-[1.4rem] bg-dark-2'>
+                        <section>
+                            <img
+                                src={webinarData.Webinar_Thumbnail}
+                                alt='Course Thumbnail'
+                                className='max-w-[50rem] w-screen object-fill h-[30rem]'
+                            />
+                        </section>
 
-            <section className='pt-[3rem] px-[3rem] max-w-[50rem]'>
-                <section className='items-center justify-between flex w-full'>
-                <Typography className='text-dark-1 font-bold pb-3' variant='h3'>
-                    Title
-                </Typography>
+                        <section className='pt-[3rem] px-[3rem] max-w-[50rem]'>
+                            <section className='items-center justify-between flex w-full'>
+                            <Typography className='text-dark-1 font-bold pb-3' variant='h3'>
+                                {webinarData.Webinar_Name}
+                            </Typography>
 
-                <Link to="/admin/webinar/update">
-                <button className='text-dark-2 bg-dark-1 hover:bg-gradient-to-tr hover:from-dark-3 hover:to-dark-4 hover:text-dark-1 px-4 py-1 rounded-lg font-semibold hover:t-dark-4 transition-all duration-200 ease-in-out'>
-Edit
-                </button>
-                </Link>
-                </section>
+                            <Link to={`/admin/webinar/update/${webinarData.$id}`}>
+                            <button className='text-dark-2 bg-dark-1 hover:bg-gradient-to-tr hover:from-dark-3 hover:to-dark-4 hover:text-dark-1 px-4 py-1 rounded-lg font-semibold hover:t-dark-4 transition-all duration-200 ease-in-out'>
+                                Edit
+                            </button>
+                            </Link>
+                            </section>
 
-                <main className='w-full px-2 justify-between items-center flex'>
-                    <Typography className='text-md text-dark-1 opacity-80' variant='h6'>
-                        Instructor
-                    </Typography>
+                            <main className='w-full px-2 justify-between items-center flex'>
+                                <Typography className='text-md text-dark-1 opacity-80' variant='h6'>
+                                    {webinarData.instructors}
+                                </Typography>
 
-                    <Typography className='text-md text-dark-1 opacity-80' variant='h6'>
-                        {new Date(courseData?.date).toLocaleDateString()}
-                    </Typography>
-                </main>
+                                <Typography className='text-md text-dark-1 opacity-80' variant='h6'>
+                                    {FormattedDate(webinarData.Webinar_Date)}
+                                </Typography>
+                            </main>
 
-                <Typography className='font-normal text-dark-1' variant='p'>
-                To create a cool loading animation, you can use CSS animations and transitions in your Loading component. Here is an example of a more visually appealing loading spinner using a rotating dot animation:
+                            <main>
+                            <Typography className='text-md text-dark-1 opacity-80' variant='p'>
+                                    {webinarData.Duration}
+                                </Typography>
+                            </main>
 
-                  1. Create the Loading Component: The Loading component uses a series of div elements with class names to define the structure of the loader. These classes will later be styled in the CSS file.
-                </Typography>
+                            <Typography className='font-normal text-dark-1' variant='p'>
+                            {webinarData.Webinar_Description}
+                            </Typography>
 
-                <Typography variant='h5' className='text-dark-1 font-normal'>
-                  Link to Join
-                </Typography>
-            </section>
-        </div>
+                            <Typography variant='h5' className='text-dark-2 px-3 py-1 rounded-lg shadow-md shadow-dark-4 font-normal bg-dark-1'>
+                                <a href={webinarData.Webinar_URL}>
+                                    Link to Join
+                                </a>
+                            </Typography>
+                        </section>
+                    </div>
+                </React.Fragment>
+            ) : (
+                <React.Fragment>
+                    <div className='flex flex-col justify-center items-center w-full min-h-screen py-[1.4rem] bg-dark-2'>
+                        <section className='flex justify-center items-center h-full mt-[4rem]'>
+                            <Loading />
+                        </section>
+                    </div>
+                </React.Fragment>
+            )}
+        </>
     );
 };
 

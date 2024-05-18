@@ -5,6 +5,7 @@ import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Typography from '@mui/material/Typography';
 import { useNavigate } from 'react-router-dom';
+import webinarDB from '../../api/db/WebinarsDb';
 
 const style = {
   position: 'absolute',
@@ -18,17 +19,21 @@ const style = {
   p: 4,
 };
 
-export default function DeleteWebinar() {
+export default function DeleteWebinar({id}) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const navigate = useNavigate();
 
-  const handleDelete = (e) => {
+  const handleDelete = async (e) => {
     try {
-      console.log("The Course has been Successfully Deleted")
-      navigate('/admin/course')
+      console.log("The Course has been Successfully Deleted");
+      const response = await webinarDB.DeleteDocument(
+        id
+      )
+      console.log(response);
+      navigate('/admin/webinars');
       handleClose();
     } catch (error) {
       console.log(error.message);

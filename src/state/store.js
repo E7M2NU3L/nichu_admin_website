@@ -1,7 +1,7 @@
 import { proxy } from "valtio";
 
 const initialState = {
-    isAdmin: false
+    isAdmin: true
 }
 
 const store = proxy(initialState);

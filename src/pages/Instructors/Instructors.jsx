@@ -29,7 +29,6 @@ const Instructors = () => {
       </section>
       
       <FetchAllInstructor />
-      
     </div>
   )
 }

@@ -29,12 +29,17 @@ const LoginAdmin = () => {
         e.preventDefault();
         try {
             const { email, username, password } = formData;
+
+            await authService.logout();
             
             const response = await authService.Login({
               username, email, password
             });
             console.log(response);
-            if (response) {
+
+            const userData = await authService.getCurrentUser();
+            const status = userData.status;
+            if (response && status === true) {
                 dispatch(
                     login({
                         authentication: true,

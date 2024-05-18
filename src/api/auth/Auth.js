@@ -77,6 +77,29 @@ export class AuthService {
             return false;
         }
     }
+
+    async getCurrentUser() {
+        try {
+            const promise = await this.account.get('current');
+            return promise;          
+        } catch (error) {
+            console.log(
+                "Error Occured: "+ error.message
+            )
+            return false;
+        }
+    }
+
+    async updateUserInfo({username, phoneNumber, file}, slug) {
+        try {
+            const response = await this.account.updateEmail()
+        } catch (error) {
+            console.log(
+                "Error Occured: "+ error.message
+            )
+            return false;
+        }
+    }
 }
 
 const authService = new AuthService();

@@ -4,7 +4,7 @@ import React from 'react'
 import { Link } from 'react-router-dom';
 import LogoutModal from '../AuthComponents/LogoutModal';
 
-const Sidebar = () => {
+const Sidebar = ({authentication}) => {
   return (
     <div>
         <Box
@@ -24,9 +24,19 @@ const Sidebar = () => {
             </ListItem>
           </Link>
 
-          <ListItem className=''>
-              <LogoutModal />
-          </ListItem>
+          <>
+            {(authentication === true ) ? (
+              <React.Fragment>
+                <ListItem className=''>
+                    <LogoutModal />
+                </ListItem>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+
+              </React.Fragment>
+            )}
+          </>
           </React.Fragment>
       </List>
     </Box>

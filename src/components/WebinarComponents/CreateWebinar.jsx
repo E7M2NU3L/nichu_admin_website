@@ -1,12 +1,14 @@
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material"
 import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import FileUpload from "./utils/FileUpload";
 import './utils/main.css'
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import webinarBucket from "../../api/bucket/WebinarsBucket";
+import { useDropzone } from "react-dropzone";
+import webinarDB from "../../api/db/WebinarsDb";
 
 const CreateWebinar = () => {
 
@@ -17,6 +19,25 @@ const CreateWebinar = () => {
   const [Description, setDescription] = useState('');
   const [Duration, setDuration] = useState('');
 
+  const [files, setFiles] = useState([]);
+  
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: (acceptedFiles) => {
+      setFiles(
+        acceptedFiles.map((file) =>
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          })
+        )
+      );
+    },
+  });
+
+  const handleRemoveFile = (index) => {
+    const updatedFiles = files.filter((_, i) => i !== index);
+    setFiles(updatedFiles);
+  };
+
   const handleWebinarName = (e) => setWebinarName(e.target.value);
   const handleInstructor = (e) => setInstructor(e.target.value);
   const handleCourseURL = (e) => setCourseURL(e.target.value);
@@ -25,7 +46,7 @@ const CreateWebinar = () => {
   const handleDescription = (content, delta, source, editor) => setDescription(content);
 
   const navigate = useNavigate();
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       console.log(
@@ -35,6 +56,21 @@ const CreateWebinar = () => {
         CourseURL,
         Description
       )
+
+      const response = await webinarBucket.CreateWebinarThumbnail(
+        files[0]
+      )
+
+      if (response) {
+        const promise = await webinarDB.CreateWebinar({
+          Webinar_Name : WebinarName,
+          Duration : Duration,
+          Webinar_Date : startDate,
+          Webinar_Thumbnail : response,
+          Webinar_URL : CourseURL,
+          Webinar_Description : Description
+        })
+      }
       console.log("The Course has been developed successfully");
       navigate('/admin/webinars');
     } catch (error) {
@@ -62,7 +98,7 @@ const CreateWebinar = () => {
           <DatePicker className="w-full outline-none hover:border-none bg-dark-2 backdrop-blur-md px-3 py-2 flex" selected={startDate} onChange={handleDate} />
           </section>
 
-            <TextField id="outlined-basic" label="Webinar Date" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={Duration} onChange={handleDuration} />
+            <TextField id="outlined-basic" label="Duration (in hours)" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={Duration} onChange={handleDuration} />
 
           <FormControl className="form-control">
             <InputLabel id="demo-simple-select-label">Webinar Instructor</InputLabel>
@@ -84,9 +120,27 @@ const CreateWebinar = () => {
                 Webinar Description
             </Typography>
             <ReactQuill theme="snow" value={Description} onChange={handleDescription}  className='border border-dark-1 outline-none'/>
+            </main>
+            <main>
+            <Typography className='text-dark-1 font-semibold' variant='p'>
+                Webinar Thumnail
+            </Typography>
+                <div {...getRootProps()} className={`dropzone ${isDragActive ? 'active' : ''} mt-[1rem]`}>
+                    <input {...getInputProps()} />
+                    <p>{isDragActive ? 'Drop files here...' : 'Drag & drop files here, or click to select files'}</p>
+
+                    {files.length > 0 && (
+                        <div className="preview-container">
+                        {files.map((file, index) => (
+                        <div key={index} className="preview-item">
+                        <img src={file.preview} alt={file.name} />
+                        <button onClick={() => handleRemoveFile(index)}>Remove</button>
+                    </div>
+                ))}
+                </div>
+            )}
+            </div>
         </main>
-          <FileUpload Title="Webinar Thumbnail" />
-          <FileUpload Title="Additional Images" />
 
           <TextField id="outlined-basic" label="Webinar URL" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={CourseURL} onChange={handleCourseURL} />
 

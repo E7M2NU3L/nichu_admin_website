@@ -1,26 +1,20 @@
 import { Client, Databases, ID } from "appwrite";
-import { configURL } from "../../config/Conf";
-import webinarBucket from "../bucket/WebinarsBucket";
 
 export class WebinarDBService{
     client = new Client();
-    databases;
+    database;
 
     constructor(){
-        this.client.setEndpoint(
-            configURL.appwrite_connection_url
-        ).setProject(
-            configURL.appwrite_connection_id
-        )
-
-        this.databases = new Databases(this.client);
+        this.client.setEndpoint("https://cloud.appwrite.io/v1");
+         this.client.setProject("65ec15ae94b048c5b098");
+        this.database = new Databases(this.client);
     }
 
     async FetchAllWebinars(){
         try {
-            const promise = this.databases.listDocuments(
-                configURL.appwrite_db_ID,
-                configURL.appwrite_webinar_collection_id,
+            const promise = this.database.listDocuments(
+                "65ec182e15ec8ffdec9d",
+                "65ec18ca5a5ac7f2ab45",
                 []
             )
             return promise;
@@ -34,9 +28,10 @@ export class WebinarDBService{
 
     async FetchSingleWebinars(slug){
         try {
-            const promise = this.databases.getDocument(
-                configURL.appwrite_db_ID,
-                configURL.appwrite_webinar_collection_id,
+            console.log(slug);
+            const promise = this.database.getDocument(
+                "65ec182e15ec8ffdec9d",
+                "65ec18ca5a5ac7f2ab45",
                 slug
             )
             return promise;
@@ -52,18 +47,23 @@ export class WebinarDBService{
         Webinar_Name,
         Duration,
         Webinar_Date,
-        Webinar_Thumbnail
+        Webinar_Thumbnail,
+        Webinar_URL,
+        Webinar_Description
     }){
         try {
-            const promise = await this.databases.createDocument(
-                configURL.appwrite_db_ID,
-                configURL.appwrite_webinar_collection_id,
+            const promise = await this.database.createDocument(
+                "65ec182e15ec8ffdec9d",
+                "65ec18ca5a5ac7f2ab45",
                 ID.unique(),
                 {
                     Webinar_Name,
                     Duration,
                     Webinar_Date,
-                    Webinar_Thumbnail: webinarBucket.CreateWebinarThumbnail(Webinar_Thumbnail)
+                    Webinar_Thumbnail,
+                    Webinar_ID : ID.unique(),
+                    Webinar_URL,
+                    Webinar_Description
                 }
             )
             return promise;
@@ -79,18 +79,23 @@ export class WebinarDBService{
         Webinar_Name,
         Duration,
         Webinar_Date,
-        Webinar_Thumbnail
+        Webinar_Thumbnail,
+        Webinar_URL,
+        Webinar_Description
     }){
         try {
-            const promise = await this.databases.updateDocument(
-                configURL.appwrite_db_ID,
-                configURL.appwrite_webinar_collection_id,
+            const promise = await this.database.updateDocument(
+                "65ec182e15ec8ffdec9d",
+                "65ec18ca5a5ac7f2ab45",
                 slug,
                 {
                     Webinar_Name,
                     Duration,
                     Webinar_Date,
-                    Webinar_Thumbnail: webinarBucket.UpdateWebinarThumbnail(Webinar_Thumbnail)
+                    Webinar_Thumbnail,
+                    Webinar_ID : ID.unique(),
+                    Webinar_URL,
+                    Webinar_Description
                 }
             )
             return promise;
@@ -104,9 +109,9 @@ export class WebinarDBService{
 
     async DeleteDocument(slug) {
         try {
-            const promise = await this.databases.deleteDocument(
-                configURL.appwrite_db_ID,
-                configURL.appwrite_webinar_collection_id,
+            const promise = await this.database.deleteDocument(
+                "65ec182e15ec8ffdec9d",
+                "65ec18ca5a5ac7f2ab45",
                 slug
             )
             return promise;
