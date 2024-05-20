@@ -4,11 +4,15 @@ import { Button, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
 import instructorDB from '../../api/db/InstructorsDb'
 import Loading from '../WebinarComponents/utils/Loading'
+import InstructorService from '../../api/bucket/InstructorBucket'
 
 const FetchSingleInstructor = () => {
 
   const [InstruuctorData, setInstructor] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [loading, setLoading] = useState(false);
+  const [Image, loadedImage] = useState(null);
 
   // Fetch course data based on the courseId
   const fetchWebinarData = async () => {
@@ -42,6 +46,37 @@ const FetchSingleInstructor = () => {
       console.log(InstruuctorData);
   }, []);
 
+  const getImage = async () => {
+    try {
+        const promise = await InstructorService.GetInstructorImage(InstruuctorData?.Instructor_Photo);
+        console.log(promise);
+        return promise;
+    } catch (error) {
+        console.log("Error Occured: "+ error.message);
+        setLoading(false);
+    }
+}
+
+useEffect(() => {
+    const loadImage = async () => {
+      try {
+        const response = await getImage();
+        if (response) {
+          console.log(response);
+          loadedImage(response);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.log('Error occurred: ' + error.message);
+        setLoading(true);
+      }
+    };
+
+    // Call the async function
+    loadImage();
+  }, [InstruuctorData])
+
+
 
   return (
     <>
@@ -59,7 +94,19 @@ const FetchSingleInstructor = () => {
         </button>
         </Link>
       </section>
-      <img src={InstruuctorData.Instructor_Photo} alt='joker' />
+      <React.Fragment>
+        {(loading === false && Image !== null) ? (
+          <>
+            <img src={Image} alt='joker' />
+          </>
+        ) : (
+          <>
+            <main className='w-[400px] h-[500px] flex justify-center items-center'>
+              <loading />
+            </main>
+          </>
+        )}
+      </React.Fragment>
       </div>
 
       <div className='max-w-[40vh] sm:max-w-[60vh]'>

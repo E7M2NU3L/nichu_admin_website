@@ -81,9 +81,7 @@ export class InstructorDBService{
                     Instructor_Portfolio,
                     Instructor_Linked_in,
                     Instructor_IG,
-                    Instructor_Photo: InstructorService.UpdateInstructorImage(
-                        Instructor_Photo
-                    )
+                    Instructor_Photo: Instructor_Photo
                 }
             )
             return promise;

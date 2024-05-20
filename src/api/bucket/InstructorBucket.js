@@ -20,7 +20,7 @@ export class InstructorBucketService {
                 ID.unique(),
                 file
             )
-            console.log(promise);
+            console.log(promise.$id);
             // Construct the URL of the uploaded file
             return promise.$id;
         } catch (error) {
@@ -48,7 +48,12 @@ export class InstructorBucketService {
                 "65ec1f81c5d56c259bf7",
                 slug
             )
-            return promise;
+            const projectEndpoint = "https://cloud.appwrite.io/v1"
+            const ProjectId = "65ec15ae94b048c5b098"
+            const bucketId = "65ec1f81c5d56c259bf7"
+            const fileId = promise.$id
+            const fileURL = `${projectEndpoint}/storage/buckets/${bucketId}/files/${fileId}/view?project=${ProjectId}&mode=admin`
+            return fileURL;
         } catch (error) {
             console.log(error.message);
             return false;

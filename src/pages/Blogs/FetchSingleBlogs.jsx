@@ -1,8 +1,44 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Delete from '../../components/Blogs/deleteBlogs'
+import blogs_db from '../../api/db/Blog';
 
 const FetchSingleBlogs = ({ImageFile, Title, Description}) => {
+  const [InstruuctorData, setInstructor] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch course data based on the courseId
+  const fetchWebinarData = async () => {
+    try {
+        // Get the current URL path from window.location.pathname
+        const urlPath = window.location.pathname;
+
+        // Split the path into an array of segments using the '/' separator
+        const pathSegments = urlPath.split('/');
+
+        // The last segment is the last part of the array
+        const id = pathSegments[pathSegments.length - 1];
+
+        // Output the extracted ID
+        console.log('Extracted ID:', id);
+        const response = await blogs_db.fetchSingleBlog(
+            id
+        );
+        console.log(response);
+        setInstructor(response);
+    } catch (error) {
+        console.error('Failed to fetch course data:', error);
+    } finally {
+        setIsLoading(false);
+    }
+};
+
+// Use effect to fetch course data when component mounts
+useEffect(() => {
+    fetchWebinarData();
+    console.log(InstruuctorData);
+}, []);
+
   return (
     <section className='flex w-full min-h-screen justify-center items-center bg-dark-2'>
       <div className='w-[300px] sm:w-[350px] min-h-[300px] bg-dark-1 rounded-md shadow-dark-4 shadow hover:translate-x-2 hover:scale-105 hover:shadow-lg hover:shadow-dark-4 transition-all duration-300 ease-in-out'>

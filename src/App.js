@@ -65,7 +65,7 @@ function App() {
             <FetchSingleInstructor />
           </IsAdmin>
           } />
-          <Route path='/admin/instructor/update' element={
+          <Route path='/admin/instructor/update/:id' element={
           <isAdmin>
             <UpdateInstructor />
           </isAdmin>

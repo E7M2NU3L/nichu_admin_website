@@ -41,7 +41,7 @@ class BlogsbucketService {
             );
             if(promise) {
                 console.log(promise);
-                return true;
+                return promise;
             }
             else {
                 return "No response";
@@ -79,7 +79,12 @@ class BlogsbucketService {
             );
             if(promise) {
                 console.log(promise);
-                return true;
+                const projectEndpoint = "https://cloud.appwrite.io/v1"
+                const ProjectId = "65ec15ae94b048c5b098"
+                const fileId = promise.$id
+                const bucketId = "65ec1f75a350016f6f24"
+                const fileURL = `${projectEndpoint}/storage/buckets/${bucketId}/files/${fileId}/view?project=${ProjectId}&mode=admin`
+                return fileURL;
             }
             else {
                 return "No response";

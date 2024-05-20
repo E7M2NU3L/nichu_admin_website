@@ -26,8 +26,7 @@ const InstructorCard = ({instructor}) => {
         const loadImage = async () => {
           try {
             const response = await getImage();
-            if (response) { 
-              console.log(response.$id);
+            if (response) {
               console.log(response);
               loadedImage(response);
               setLoading(false);
@@ -42,14 +41,13 @@ const InstructorCard = ({instructor}) => {
         loadImage();
       }, [])
 
-    useEffect(() => {}, []);
   
     return (
     <div className='w-[230px] min-h-[25rem] bg-dark-1 shadow-md shadow-dark-4 hover:shadow-lg rounded-lg hover:scale-105 translate-x-1 transition-all duration-200 ease-in-out'>
         <React.Fragment>
             {(loading === false && Image !== null) ?  (
                 <>
-                <img src={PlaceHolder} alt='placeholder' className='w-full object-fit h-[14rem]' />
+                <img src={Image} alt='placeholder' className='w-full object-fit h-[14rem]' />
                 </>
             ): (
                 <>

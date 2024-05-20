@@ -46,13 +46,20 @@ const CreateBlog = () => {
       const image_upload = await blog_bucket.UploadImage(files[0]);
       console.log(image_upload);
 
+      const fileId = image_upload ? image_upload.$id : ''
+
       const res = await blogs_db.createBlog(
-        {Title: title, Description: Description, Image: image_upload.$id}
+        {Title: title, Description: Description, Image: fileId}
       );
       console.log(res);
 
-      console.log("The Course has been developed successfully");
-      navigate('/admin/blogs/fetch-all-blogs');
+      if (res.$id) {
+        console.log("The Course has been developed successfully");
+        navigate('/admin/blogs/fetch-all-blogs');
+      }
+      else {
+        return false;
+      }
     } catch (error) {
       console.log(error.message);
       navigate('/');

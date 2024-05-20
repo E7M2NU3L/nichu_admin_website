@@ -1,17 +1,25 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import PlaceHolder from '../../assets/images/images (5).png'
 import CardBlog from '../../components/Blogs/blogs'
 import { Link } from 'react-router-dom'
 import blogs_db from '../../api/db/Blog'
+import Loading from '../../components/WebinarComponents/utils/Loading'
 
 const FetchAllBlogs = () => {
+
+  const [blogs, setblogs] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchCourseData = async() => {
       try {
         const res = await blogs_db.FetchAllBlogs();
         console.log(res);
+        setblogs(res.documents);
+        setLoading(false);
       } catch (error) {
         console.error(error.message);
+        setLoading(true);
       }
     }
 
@@ -34,13 +42,21 @@ const FetchAllBlogs = () => {
         </button>
       </section>
 
-      <section className='w-full h-full flex flex-wrap justify-center items-center gap-x-[2.2rem] gap-y-[3rem] px-[2rem]'>
-        <CardBlog />
-        <CardBlog />
-        <CardBlog />
-        <CardBlog />
-        <CardBlog />
-      </section>
+      {(loading === false && blogs !== null) ? (
+        <React.Fragment>
+          {blogs.map((blog, index) => (
+            <>
+                <CardBlog blog={blog} key={index} />
+            </>
+          ))}
+        </React.Fragment>    
+      ) : (
+        <React.Fragment>
+        <section className='w-full h-full flex flex-wrap justify-center items-center gap-x-[2.2rem] gap-y-[3rem] px-[2rem]'>
+          <Loading />
+        </section>
+      </React.Fragment>
+      )}
     </div>
   )
 }

@@ -1,16 +1,34 @@
-import { Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
+import { Button, TextField, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import './utils/main.css';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import webinarDB from "../../api/db/WebinarsDb";
+import instructorDB from "../../api/db/InstructorsDb";
+import InstructorService from "../../api/bucket/InstructorBucket";
 import { useDropzone } from "react-dropzone";
+import Loading from "../CoursesComponents/utils/Loading";
 
-const UpdateWebinar = () => {
-    const [files, setFiles] = useState([]);
+const UpdateInstructor = () => {
+  const [InstructorData, setInstructorData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const [loading, setLoading] = useState(false);
+  const [Image, setImage] = useState(null);
+
+  const getImage = async () => {
+    try {
+      const promise = await InstructorService.GetInstructorImage(InstructorData?.Instructor_Photo);
+      console.log(promise);
+      return promise;
+    } catch (error) {
+      console.log("Error Occured: " + error.message);
+      setLoading(false);
+    }
+  };
+
+  const [files, setFiles] = useState([]);
   
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles) => {
@@ -29,238 +47,153 @@ const UpdateWebinar = () => {
     setFiles(updatedFiles);
   };
 
-    const { webinarId } = useParams(); // Assuming you are using React Router v6 and `useParams` to get the webinar ID from the URL.
-    const [formData, setFormData] = useState({
-        WebinarName: '',
-        Instructor: '',
-        startDate: new Date(),
-        CourseURL: '',
-        Description: '',
-        Duration: '',
-        // Add other form fields as needed
-    });
-    const [isLoading, setIsLoading] = useState(true);
-    const navigate = useNavigate();
-
-    // Fetch webinar data based on the ID from the URL
-const fetchWebinarData = async () => {
+  // Fetch instructor data based on the instructorId
+  const fetchInstructorData = async () => {
     try {
-        // Get the current URL path from window.location.pathname
-        const urlPath = window.location.pathname;
+      // Get the current URL path from window.location.pathname
+      const urlPath = window.location.pathname;
 
-        // Split the path into an array of segments using the '/' separator
-        const pathSegments = urlPath.split('/');
+      // Split the path into an array of segments using the '/' separator
+      const pathSegments = urlPath.split('/');
 
-        // The last segment is the last part of the array
-        const webinarId = pathSegments[pathSegments.length - 1];
+      // The last segment is the last part of the array
+      const id = pathSegments[pathSegments.length - 1];
 
-        // Output the extracted ID
-        console.log('Extracted ID:', webinarId);
-        const response = await webinarDB.FetchSingleWebinars(webinarId);
-        console.log(response);
-
-        // Initialize form data with the fetched data
-        setFormData({
-            WebinarName: response.Webinar_Name,
-            Instructor: response.Instructor,
-            startDate: new Date(response.Webinar_Date),
-            CourseURL: response.Webinar_Thumbnail,
-            Description: response.Webinar_Description,
-            Duration: response.Duration,
-            // Map other fields as needed
-        });
-
-        // Update logic if necessary
-        if (formData !== null) {
-            const WebinarName = response.Webinar_Name;
-            const Instructor = response.Instructor;
-            const startDate = new Date(response.Webinar_Date);
-            const CourseURL = response.Webinar_Thumbnail;
-            const Description = response.Webinar_Description;
-            const Duration = response.Duration;
-
-            const updateResponse = await webinarDB.UpdateWebinar(
-                webinarId, {
-                    WebinarName,
-                    Duration,
-                    startDate,
-                    CourseURL,  // Use CourseURL here instead of Webinar_Thumbnail
-                    Description
-                }
-            );
-            console.log(updateResponse);
-        }
+      // Output the extracted ID
+      console.log('Extracted ID:', id);
+      const response = await instructorDB.FetchSingleInstructor(id);
+      console.log(response);
+      setInstructorData(response);
     } catch (error) {
-        console.error('Failed to fetch webinar data:', error);
+      console.error('Failed to fetch instructor data:', error);
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
-};
+  };
 
+  // Use effect to fetch instructor data when component mounts
+  useEffect(() => {
+    fetchInstructorData();
+  }, []);
 
-    // Fetch data when the component mounts
-    useEffect(() => {
-        fetchWebinarData();
-    }, [webinarId]);
+  useEffect(() => {
+    if (InstructorData) {
+      setDescription(InstructorData.Instructor_Description || "");
+      setInstructorName(InstructorData.Instructor_Name || "");
+      setInstructorPortfolio(InstructorData.Instructor_Portfolio || "");
+      setInstructorLinkedIn(InstructorData.Instructor_Linked_in || "");
+      setInstructorIG(InstructorData.Instructor_IG || "");
+      getImage().then((image) => setImage(image));
+    }
+  }, [InstructorData]);
 
-    // Handle changes to form fields
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
+  const [InstructorName, setInstructorName] = useState('');
+  const [InstructorPortfolio, setInstructorPortfolio] = useState('');
+  const [Description, setDescription] = useState('');
+  const [InstructorLinkedIn, setInstructorLinkedIn] = useState('');
+  const [InstructorIG, setInstructorIG] = useState('');
 
-    // Handle ReactQuill changes
-    const handleDescriptionChange = (content) => {
-        setFormData((prevData) => ({
-            ...prevData,
-            Description: content,
-        }));
-    };
+  const handleInstructorName = (e) => setInstructorName(e.target.value);
+  const handleInstructorPortfolio = (e) => setInstructorPortfolio(e.target.value);
+  const handleInstructorIG = (e) => setInstructorIG(e.target.value);
+  const handleInstructorLinkedIn = (e) => setInstructorLinkedIn(e.target.value);
+  const handleDescription = (content) => setDescription(content);
 
-    // Handle date change
-    const handleDateChange = (date) => {
-        setFormData((prevData) => ({
-            ...prevData,
-            startDate: date,
-        }));
-    };
+  const navigate = useNavigate();
 
-    // Handle form submission
-const handleSubmit = async (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     try {
-        // Update webinar data using the current form data
-        const updateResponse = await webinarDB.UpdateWebinar(webinarId, {
-            Webinar_Name: formData.WebinarName,
-            Instructor: formData.Instructor,
-            Webinar_Date: formData.startDate.toISOString(),
-            Webinar_Thumbnail: formData.CourseURL,  // Use CourseURL here instead of Webinar_Thumbnail
-            Webinar_Description: formData.Description,
-            Duration: formData.Duration,
-            // Add other fields as needed
-        });
+      console.log(
+        InstructorName,
+        InstructorIG,
+        InstructorLinkedIn,
+        InstructorPortfolio,
+        Description
+      );
+      const fileId = await getImage()
+      console.log(fileId);
+      console.log(files[0]);
+      const response = await InstructorService.CreateInstructorImage(files[0]);
+      console.log("Updated Image: ", response);
 
-        console.log('Webinar updated successfully:', updateResponse);
+      const file = await InstructorService.GetInstructorImage(response);
+      console.log(file);
 
-        // Navigate to the webinars list page
-        navigate('/admin/webinars');
+      const promise = await instructorDB.updateInstructor(
+        InstructorData.$id, {
+          InstructorName,
+          Description,
+          InstructorPortfolio,
+          InstructorLinkedIn,
+          InstructorIG,
+          Instructor_Photo: file || ""
+        }
+      );
+      console.log("Updated: ", promise);
+      console.log("The Instructor has been updated successfully");
+      navigate('/admin/instructor');
     } catch (error) {
-        console.error('Error updating webinar:', error);
+      console.log(error.message);
+      navigate('/');
     }
-};
+  };
 
-    // Render the form
-    return (
-        <main className="flex justify-center items-center min-h-screen bg-dark-2 py-[4rem]">
+  if (isLoading) {
+    return <Loading />; // Show loading animation while data is being fetched
+  }
 
-            <form onSubmit={handleSubmit} className="py-[2rem] max-w-[20rem] sm:max-w-[30rem] gap-y-[1rem] flex flex-col">
-                <Typography variant="h6" className="text-dark-1 pb-[1rem] font-semibold">
-                    Update <span className="text-dark-5">
-                        Webinar Details
-                    </span>
-                </Typography>
+  return (
+    <main className="flex justify-center items-center min-h-screen bg-dark-2 py-[4rem]">
+      <form onSubmit={handleSubmit} className="py-[2rem] max-w-[20rem] sm:max-w-[30rem] gap-y-[1rem] flex flex-col">
+        <Typography variant="h6" className="text-dark-1 pb-[1rem] font-semibold">
+          Update <span className="text-dark-5">
+            Instructor Info
+          </span>
+        </Typography>
 
-                <TextField
-                    id="outlined-basic"
-                    label="Webinar Name"
-                    variant="outlined"
-                    type='text'
-                    required={true}
-                    className="text-field pb-[1rem]"
-                    name="WebinarName"
-                    value={formData.WebinarName}
-                    onChange={handleChange}
-                />
+        <TextField id="outlined-basic" label="Instructor Name" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={InstructorName} onChange={handleInstructorName} />
 
-                <section>
-                    <Typography className="text-dark-1 font-semibold">
-                        Choose the Date
-                    </Typography>
-                    <DatePicker
-                        className="w-full outline-none hover:border-none bg-dark-2 backdrop-blur-md px-3 py-2 flex"
-                        selected={formData.startDate}
-                        onChange={handleDateChange}
-                    />
-                </section>
+        <TextField id="outlined-basic" label="Portfolio URL" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={InstructorPortfolio} onChange={handleInstructorPortfolio} />
 
-                <TextField
-                    id="outlined-basic"
-                    label="Webinar Duration"
-                    variant="outlined"
-                    type='text'
-                    required={true}
-                    className="text-field pb-[1rem]"
-                    name="Duration"
-                    value={formData.Duration}
-                    onChange={handleChange}
-                />
+        <TextField id="outlined-basic" label="Instructor IG URL" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={InstructorIG} onChange={handleInstructorIG} />
 
-                <FormControl className="form-control">
-                    <InputLabel id="demo-simple-select-label">Webinar Instructor</InputLabel>
-                    <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        name="Instructor"
-                        value={formData.Instructor}
-                        label="Instructor"
-                        onChange={handleChange}
-                    >
-                        <MenuItem value={"Online"}>Nishok</MenuItem>
-                        <MenuItem value={"Self Paced"}>Ronnie Coleman</MenuItem>
-                        <MenuItem value={"Offline"} disabled={true}>CBUM</MenuItem>
-                    </Select>
-                </FormControl>
+        <TextField id="outlined-basic" label="Instructor LinkedIN URL" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={InstructorLinkedIn} onChange={handleInstructorLinkedIn} />
 
-                <main className='pb-[1rem]'>
-                    <Typography className='font-semibold text-dark-1' variant="p">
-                        Webinar Description
-                    </Typography>
-                    <ReactQuill theme="snow" value={formData.Description} onChange={handleDescriptionChange} className='border border-dark-1 outline-none'/>
-                </main>
-
-                {/* You may need to handle the FileUpload component appropriately */}
-                 <main>
-                <Typography className='text-dark-1 font-semibold' variant='p'>
-                    Webinar Thumbnail
-                </Typography>
-                    <div {...getRootProps()} className={`dropzone ${isDragActive ? 'active' : ''}`}>
-                        <input {...getInputProps()} />
-                        <p>{isDragActive ? 'Drop files here...' : 'Drag & drop files here, or click to select files'}</p>
-
-                        {files.length > 0 && (
-                            <div className="preview-container">
-                            {files.map((file, index) => (
-                            <div key={index} className="preview-item">
-                            <img src={file.preview} alt={file.name} />
-                            <button onClick={() => handleRemoveFile(index)}>Remove</button>
-                        </div>
-                    ))}
-                    </div>
-                )}
-                </div>
-                </main>
-                
-                <TextField
-                    id="outlined-basic"
-                    label="Webinar URL"
-                    variant="outlined"
-                    type='text'
-                    required={true}
-                    className="text-field pb-[1rem]"
-                    name="CourseURL"
-                    value={formData.CourseURL}
-                    onChange={handleChange}
-                />
-
-                <Button type="submit" variant="contained" className="bg-dark-1 text-dark-2 flex justify-center w-1/2">
-                    Update
-                </Button>
-            </form>
+        <main className='pb-[1rem]'>
+          <Typography className='font-semibold text-dark-1' variant="p">
+            Instructor Description
+          </Typography>
+          <ReactQuill theme="snow" value={Description} onChange={handleDescription} className='border border-dark-1 outline-none' />
         </main>
-    );
+
+        <main>
+          <Typography className='text-dark-1 font-semibold' variant='p'>
+            Upload Instructor Profile Page
+          </Typography>
+          <div {...getRootProps()} className={`dropzone ${isDragActive ? 'active' : ''}`}>
+            <input {...getInputProps()} />
+            <p>{isDragActive ? 'Drop files here...' : 'Drag & drop files here, or click to select files'}</p>
+
+            {files.length > 0 && (
+              <div className="preview-container">
+                {files.map((file, index) => (
+                  <div key={index} className="preview-item">
+                    <img src={file.preview} alt={file.name} />
+                    <button onClick={() => handleRemoveFile(index)}>Remove</button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </main>
+
+        <Button type="submit" variant="contained" className="bg-dark-1 text-dark-2 flex justify-center w-1/2">
+          Update
+        </Button>
+      </form>
+    </main>
+  );
 };
 
-export default UpdateWebinar;
+export default UpdateInstructor;
