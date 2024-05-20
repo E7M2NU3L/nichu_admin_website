@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authService from '../../api/auth/Auth';
 import { useDispatch } from 'react-redux';
-import {login} from '../../slice/authSlice'
+import { login, logout } from '../../slice/authSlice';
 
 const LoginAdmin = () => {
     const navigate = useNavigate();
@@ -27,35 +27,31 @@ const LoginAdmin = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const { email, password } = formData;  // Extract email and password from formData
         try {
-            const { email, username, password } = formData;
+            const response = await authService.Login({ email, password });
 
-            await authService.logout();
-            
-            const response = await authService.Login({
-              username, email, password
-            });
-            console.log(response);
-
-            const userData = await authService.getCurrentUser();
-            const status = userData.status;
-            if (response && status === true) {
+            if (response.$id) {
+                dispatch(login({
+                    userData: response
+                }));
+                console.log(response);
+                navigate('/')
+            }
+            else {
                 dispatch(
-                    login({
-                        authentication: true,
-                        userData: response
+                    logout({
+                        authentication: false,
+                        userData: null
                     })
                 )
-                console.log("Login successful");
-                navigate('/');
-            } else {
-                throw new Error('Login failed');
+                return false;
             }
         } catch (error) {
-            console.error(error.message);
+            console.log(error.message);
             navigate('/admin/auth/login');
         }
-    };
+    }
 
     return (
         <main className='min-h-[90vh] bg-dark-2 flex flex-col justify-center items-center gap-y-[1rem]'>

@@ -5,12 +5,13 @@ import { Link } from 'react-router-dom'
 import DrawerRight from './utils/DrawerRight'
 import LogoutModal from './utils/LogoutModal'
 import { useSelector } from 'react-redux'
-import { AuthStatus } from '../../slice/authSlice'
+import { authStatus } from '../../slice/authSlice'
 
 const NavbarUtil = () => {
 
-  const loginStatus = useSelector(AuthStatus);
-  const auth = loginStatus.authentication;
+  const loginStatus = useSelector(authStatus);
+  const auth = loginStatus.isLoggedin;
+  console.log(auth);
 
   return (
     <div className='flex justify-between items-center w-full min-h-[10vh] bg-dark-1 px-4'>
@@ -44,6 +45,11 @@ const NavbarUtil = () => {
             Instructors
           </Link>
         </li>
+        <li className='text-md text-dark-2 font-semibold hover:translate-x-1 hover:scale-105 transition-all duration-300 ease-in-out'>
+          <Link className='' to="/admin/blogs/fetch-all-blogs">
+            Blogs
+          </Link>
+        </li>
       </ul>
 
       
@@ -63,12 +69,6 @@ const NavbarUtil = () => {
           </React.Fragment>
         )}
        </>
-
-      <h1 className='text-md text-dark-4 font-bold hover:text-dark-4 hover:translate-x-1 hover:scale-105 transition-all duration-300 ease-in-out'>
-        <Link to="/admin/dashboard">
-          Dashboard
-        </Link>
-      </h1>
     </div>
 
     <div className='sm:hidden block'>

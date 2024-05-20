@@ -128,6 +128,7 @@ export class InstructorDBService{
 
     async DeleteInstructor(slug){
         try {
+            console.log(slug);
             const promise = await this.database.deleteDocument(
                 "65ec182e15ec8ffdec9d",
                 "65ec1c68a1be3cdfa452",
@@ -135,7 +136,8 @@ export class InstructorDBService{
             )
             return promise;
         } catch (error) {
-            console.log(
+            console.log(slug);
+            console.error(
                 "Error Deleting the Instructor: " + error.message
             );
             return false;

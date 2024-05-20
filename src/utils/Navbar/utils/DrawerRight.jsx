@@ -8,8 +8,11 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { AdminPanelSettings, GolfCourse, Login, Menu, Person, Person2Outlined, WebOutlined } from '@mui/icons-material';
+import {GolfCourse, Login, Menu, Person, Person2Outlined, PresentToAll, WebOutlined } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { authStatus } from '../../../slice/authSlice';
+import LogoutModal from './LogoutModal';
 
 export default function DrawerRight() {
   const [open, setOpen] = React.useState(false);
@@ -26,15 +29,20 @@ export default function DrawerRight() {
     setOpen(open);
   };
 
+  const loginStatus = useSelector(authStatus);
+  const auth = loginStatus.isLoggedin;
+  console.log(auth);
+
 const Iconset = [
     <Person />,
     <GolfCourse />,
     <WebOutlined />,
-    <Person2Outlined />
+    <Person2Outlined />,
+    <PresentToAll />
 ];
 
-const labels = ['Users', 'Courses', 'Webinars', 'Instructors'];
-const links = ['/admin/users', '/admin/course', '/admin/webinars', '/admin/instructor']
+const labels = ['Users', 'Courses', 'Webinars', 'Instructors', "Blogs"];
+const links = ['/admin/users', '/admin/course', '/admin/webinars', '/admin/instructor', '/admin/blogs/fetch-all-blogs']
 
 const arrayOfObjects = labels.map((label, index) => ({
     text: label,
@@ -42,13 +50,12 @@ const arrayOfObjects = labels.map((label, index) => ({
     link: links[index]
 }));
 
-const AdminLinks = ['/admin/dashboard', '/admin/auth/login'];
+const AdminLinks = ['/admin/auth/login'];
 const AdminList = [
-    <AdminPanelSettings />,
     <Login />
 ];
 
-const Adminlabels = ['Admin Panel', 'Login'];
+const Adminlabels = ['Login'];
 
 const adminArrayOfObjects = Adminlabels.map((label, index) => ({
     text: label,
@@ -80,20 +87,30 @@ const adminArrayOfObjects = Adminlabels.map((label, index) => ({
         ))}
       </List>
       <Divider />
-      <List>
-        {adminArrayOfObjects.map((content) => (
-          <Link to={content.links}>
-            <ListItem key={content.text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {content.Icon}
-                </ListItemIcon>
-                <ListItemText primary={content.text} className='text-dark-1 font-semibold' />
-              </ListItemButton>
-            </ListItem>
-          </Link>
-        ))}
-      </List>
+          <React.Fragment>
+            {(auth) ? (
+              <>
+                <LogoutModal />
+              </>
+            ) : (
+              <>
+               <List>
+                {adminArrayOfObjects.map((content) => (
+                  <Link to={content.links}>
+                    <ListItem key={content.text} disablePadding>
+                      <ListItemButton>
+                        <ListItemIcon>
+                          {content.Icon}
+                        </ListItemIcon>
+                        <ListItemText primary={content.text} className='text-dark-1 font-semibold' />
+                      </ListItemButton>
+                    </ListItem>
+                  </Link>
+                ))}
+              </List>
+              </>
+            )}
+          </React.Fragment>
     </Box>
   );
 

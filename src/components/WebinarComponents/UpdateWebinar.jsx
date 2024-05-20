@@ -1,15 +1,34 @@
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import FileUpload from "./utils/FileUpload";
 import './utils/main.css';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import webinarDB from "../../api/db/WebinarsDb";
+import { useDropzone } from "react-dropzone";
 
 const UpdateWebinar = () => {
+    const [files, setFiles] = useState([]);
+  
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: (acceptedFiles) => {
+      setFiles(
+        acceptedFiles.map((file) =>
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          })
+        )
+      );
+    },
+  });
+
+  const handleRemoveFile = (index) => {
+    const updatedFiles = files.filter((_, i) => i !== index);
+    setFiles(updatedFiles);
+  };
+
     const { webinarId } = useParams(); // Assuming you are using React Router v6 and `useParams` to get the webinar ID from the URL.
     const [formData, setFormData] = useState({
         WebinarName: '',
@@ -24,56 +43,60 @@ const UpdateWebinar = () => {
     const navigate = useNavigate();
 
     // Fetch webinar data based on the ID from the URL
-    const fetchWebinarData = async () => {
-        try {
-           // Get the current URL path from window.location.pathname
-           const urlPath = window.location.pathname;
+const fetchWebinarData = async () => {
+    try {
+        // Get the current URL path from window.location.pathname
+        const urlPath = window.location.pathname;
 
-           // Split the path into an array of segments using the '/' separator
-           const pathSegments = urlPath.split('/');
+        // Split the path into an array of segments using the '/' separator
+        const pathSegments = urlPath.split('/');
 
-           // The last segment is the last part of the array
-           const webinarId = pathSegments[pathSegments.length - 1];
+        // The last segment is the last part of the array
+        const webinarId = pathSegments[pathSegments.length - 1];
 
-           // Output the extracted ID
-           console.log('Extracted ID:', webinarId);
-            const response = await webinarDB.FetchSingleWebinars(webinarId);
-            console.log(response);
-            
-            // Initialize form data with the fetched data
-            setFormData({
-                WebinarName: response.Webinar_Name,
-                Instructor: response.Instructor,
-                startDate: new Date(response.Webinar_Date),
-                CourseURL: response.Webinar_Thumbnail,
-                Description: response.Webinar_Description,
-                Duration: response.Duration,
-                // Map other fields as needed
-            });
+        // Output the extracted ID
+        console.log('Extracted ID:', webinarId);
+        const response = await webinarDB.FetchSingleWebinars(webinarId);
+        console.log(response);
 
-            if (formData !== null) {
-                
-                const WebinarName =  response.Webinar_Name;
-                const Instructor =  response.Instructor;
-                const startDate =  new Date(response.Webinar_Date);
-                const CourseURL =  response.Webinar_Thumbnail;
-                const Description =  response.Webinar_Description;
-                const Duration =  response.Duration;
+        // Initialize form data with the fetched data
+        setFormData({
+            WebinarName: response.Webinar_Name,
+            Instructor: response.Instructor,
+            startDate: new Date(response.Webinar_Date),
+            CourseURL: response.Webinar_Thumbnail,
+            Description: response.Webinar_Description,
+            Duration: response.Duration,
+            // Map other fields as needed
+        });
 
+        // Update logic if necessary
+        if (formData !== null) {
+            const WebinarName = response.Webinar_Name;
+            const Instructor = response.Instructor;
+            const startDate = new Date(response.Webinar_Date);
+            const CourseURL = response.Webinar_Thumbnail;
+            const Description = response.Webinar_Description;
+            const Duration = response.Duration;
 
-                const response = await webinarDB.UpdateWebinar(
-                    webinarId, {
-                        WebinarName, Duration, startDate, Webinar_Thumbnail, CourseURL, Description
-                    }
-                )
-                console.log(response);
-            }
-        } catch (error) {
-            console.error('Failed to fetch webinar data:', error);
-        } finally {
-            setIsLoading(false);
+            const updateResponse = await webinarDB.UpdateWebinar(
+                webinarId, {
+                    WebinarName,
+                    Duration,
+                    startDate,
+                    CourseURL,  // Use CourseURL here instead of Webinar_Thumbnail
+                    Description
+                }
+            );
+            console.log(updateResponse);
         }
-    };
+    } catch (error) {
+        console.error('Failed to fetch webinar data:', error);
+    } finally {
+        setIsLoading(false);
+    }
+};
+
 
     // Fetch data when the component mounts
     useEffect(() => {
@@ -106,28 +129,28 @@ const UpdateWebinar = () => {
     };
 
     // Handle form submission
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            // Update webinar data using the current form data
-            const updateResponse = await webinarDB.updateWebinar(webinarId, {
-                Webinar_Name: formData.WebinarName,
-                Instructor: formData.Instructor,
-                Webinar_Date: formData.startDate.toISOString(),
-                Webinar_Thumbnail: formData.CourseURL,
-                Webinar_Description: formData.Description,
-                Duration: formData.Duration,
-                // Add other fields as needed
-            });
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+        // Update webinar data using the current form data
+        const updateResponse = await webinarDB.UpdateWebinar(webinarId, {
+            Webinar_Name: formData.WebinarName,
+            Instructor: formData.Instructor,
+            Webinar_Date: formData.startDate.toISOString(),
+            Webinar_Thumbnail: formData.CourseURL,  // Use CourseURL here instead of Webinar_Thumbnail
+            Webinar_Description: formData.Description,
+            Duration: formData.Duration,
+            // Add other fields as needed
+        });
 
-            console.log('Webinar updated successfully:', updateResponse);
+        console.log('Webinar updated successfully:', updateResponse);
 
-            // Navigate to the webinars list page
-            navigate('/admin/webinars');
-        } catch (error) {
-            console.error('Error updating webinar:', error);
-        }
-    };
+        // Navigate to the webinars list page
+        navigate('/admin/webinars');
+    } catch (error) {
+        console.error('Error updating webinar:', error);
+    }
+};
 
     // Render the form
     return (
@@ -199,9 +222,27 @@ const UpdateWebinar = () => {
                 </main>
 
                 {/* You may need to handle the FileUpload component appropriately */}
-                <FileUpload Title="Webinar Thumbnail" />
-                <FileUpload Title="Additional Images" />
+                 <main>
+                <Typography className='text-dark-1 font-semibold' variant='p'>
+                    Webinar Thumbnail
+                </Typography>
+                    <div {...getRootProps()} className={`dropzone ${isDragActive ? 'active' : ''}`}>
+                        <input {...getInputProps()} />
+                        <p>{isDragActive ? 'Drop files here...' : 'Drag & drop files here, or click to select files'}</p>
 
+                        {files.length > 0 && (
+                            <div className="preview-container">
+                            {files.map((file, index) => (
+                            <div key={index} className="preview-item">
+                            <img src={file.preview} alt={file.name} />
+                            <button onClick={() => handleRemoveFile(index)}>Remove</button>
+                        </div>
+                    ))}
+                    </div>
+                )}
+                </div>
+                </main>
+                
                 <TextField
                     id="outlined-basic"
                     label="Webinar URL"

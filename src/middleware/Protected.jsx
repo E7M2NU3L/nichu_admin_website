@@ -1,14 +1,14 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { AuthStatus } from '../slice/authSlice'
+import { authStatus } from '../slice/authSlice'
 import { Link } from 'react-router-dom';
 import { Typography } from '@mui/material';
 import { Home } from '@mui/icons-material';
 
 const Protected = ({children}) => {
 
-  const userAuthStatus = useSelector(AuthStatus);
-  const authentication = userAuthStatus.authentication;
+  const userAuthStatus = useSelector(authStatus);
+  const authentication = userAuthStatus.isLoggedin;
 
   const renderParent = (authentication) => {
     if(authentication) {

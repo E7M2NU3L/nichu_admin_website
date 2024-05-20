@@ -22,8 +22,7 @@ export class InstructorBucketService {
             )
             console.log(promise);
             // Construct the URL of the uploaded file
-            const fileURL = `https://cloud.appwrite.io/v1/storage/buckets/65ec1f81c5d56c259bf7/files/${promise.$id}/view?project=65ec15ae94b048c5b098`;
-            return fileURL;
+            return promise.$id;
         } catch (error) {
             console.log(error.message);
             return false;

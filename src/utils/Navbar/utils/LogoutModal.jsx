@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import { useNavigate } from 'react-router-dom';
 import authService from '../../../api/auth/Auth';
 import { useDispatch, useSelector } from 'react-redux';
-import { AuthStatus } from '../../../slice/authSlice';
+import { authStatus } from '../../../slice/authSlice';
 import {logout} from '../../../slice/authSlice'
 
 const style = {
@@ -28,7 +28,7 @@ export default function LogoutModal() {
   const handleClose = () => setOpen(false);
   const navigate = useNavigate();
 
-  const logoutStatus = useSelector(AuthStatus);
+  const logoutStatus = useSelector(authStatus);
   console.log(logoutStatus);
 
   const dispatch = useDispatch();
@@ -56,7 +56,7 @@ export default function LogoutModal() {
 
   return (
     <div>
-        <button className='text-md text-dark-1 bg-dark-3 px-2 py-1 rounded-lg shadow-md font-semibold hover:translate-x-1 hover:bg-dark-4 hover:scale-105 transition-all duration-300 ease-in-out' onClick={handleOpen}>
+        <button className='text-md text-dark-1 bg-dark-3 px-2 py-1 rounded-lg shadow-md font-semibold hover:translate-x-1 hover:bg-dark-4 hover:scale-105 transition-all duration-300 ease-in-out justify-center flex' onClick={handleOpen}>
             Logout
         </button> 
       <Modal

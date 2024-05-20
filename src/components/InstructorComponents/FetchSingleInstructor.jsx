@@ -1,57 +1,111 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PlaceHolder from '../../assets/images/joker.webp'
 import { Button, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
+import instructorDB from '../../api/db/InstructorsDb'
+import Loading from '../WebinarComponents/utils/Loading'
 
 const FetchSingleInstructor = () => {
+
+  const [InstruuctorData, setInstructor] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch course data based on the courseId
+  const fetchWebinarData = async () => {
+      try {
+          // Get the current URL path from window.location.pathname
+          const urlPath = window.location.pathname;
+
+          // Split the path into an array of segments using the '/' separator
+          const pathSegments = urlPath.split('/');
+
+          // The last segment is the last part of the array
+          const id = pathSegments[pathSegments.length - 1];
+
+          // Output the extracted ID
+          console.log('Extracted ID:', id);
+          const response = await instructorDB.FetchSingleInstructor(
+              id
+          );
+          console.log(response);
+          setInstructor(response);
+      } catch (error) {
+          console.error('Failed to fetch course data:', error);
+      } finally {
+          setIsLoading(false);
+      }
+  };
+
+  // Use effect to fetch course data when component mounts
+  useEffect(() => {
+      fetchWebinarData();
+      console.log(InstruuctorData);
+  }, []);
+
+
   return (
-    <div className='flex justify-around items-center min-h-screen w-full bg-dark-2'>
+    <>
+      {(isLoading === false && InstruuctorData !== null) ? (
+        <React.Fragment>
+          <div className='flex justify-around items-center min-h-screen w-full bg-dark-2'>
       
       <div className='max-w-[40vh] flex flex-col justify-center items-center gap-y-[1rem]'>
       <section className='flex justify-between items-center w-full px-2'>
         <Typography variant='h6' className='text-dark-1 font-semibold'>Profile</Typography>
         
-        <Link to="/admin/instructor/update">
+        <Link to={`/admin/instructor/update/${InstruuctorData.$id}`}>
         <button className=' bg-dark-1 text-dark-2 px-3 py-1 rounded-lg font-bold hover:bg-gradient-to-tr hover:from-dark-3 hover:to-dark-4 hover:text-dark-2 hover:scale-110 hover:translate-x-2 transition-all duration-300 ease-in-out'>
           Edit
         </button>
         </Link>
       </section>
-<img src={PlaceHolder} alt='joker' />
+      <img src={InstruuctorData.Instructor_Photo} alt='joker' />
       </div>
 
-      <div className='max-w-[40vh]'>
+      <div className='max-w-[40vh] sm:max-w-[60vh]'>
         <Typography variant='h4' className='text-dark-1 font-semibold'>
-          Instructor Name
+          {InstruuctorData.Instructor_Name}
         </Typography>
 
         <br />
 
         <Typography variant='body-2' className='text-md font-normal text-dark-1 mt-[1rem]'>
-        Michael is a seasoned professional in the field of web development with over a decade of experience in the industry. His journey began with a passion for coding and technology, which led him to earn a degree in Computer Science. Since then, he has worked on numerous high-profile projects.
+        {InstruuctorData.Instructor_Description}
         </Typography>
 
         <div className='flex flex-col gap-[1rem] pt-[1.2rem]'>
-<Typography className='text-dark-1'>
-  IG URL
-</Typography>
-<Typography className='text-dark-1'>
-  LinkedI URL
-</Typography>
+          <Typography className='text-dark-1'>
+            {InstruuctorData.Instructor_IG}
+          </Typography>
+          <Typography className='text-dark-1'>
+            {InstruuctorData.Instructor_Linked_in}
+          </Typography>
         </div>
 
         <section className='pt-3 flex justify-between items-center w-full px-3'>
           <Typography variant='h6'>
-Portfolio URL
+            Portfolio URL
           </Typography>
 
           <Button variant='contained'>
-Visit
+            <a href={InstruuctorData.
+Instructor_Portfolio}>
+            Visit
+            </a>
           </Button>
         </section>
-      </div>
+        </div>
 
-    </div>
+        </div>
+        </React.Fragment>
+      ) : (
+        <React.Fragment>
+          <div className='flex justify-around items-center min-h-screen w-full bg-dark-2'>
+            <Loading />
+          </div>
+        </React.Fragment>
+      )}
+    </>
   )
 }
 

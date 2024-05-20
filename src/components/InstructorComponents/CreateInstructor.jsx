@@ -65,13 +65,13 @@ const CreateInstructor = () => {
           Instructor_Portfolio: InstructorPortFolio,
           Instructor_Linked_in: InstructorLinkedIn,
           Instructor_IG: InstructorIG,
-          Instructor_Photo: response,
+          Instructor_Photo: response ? response : "",
       })
 
       console.log(promise);
       
-      console.log("The Course has been developed successfully");
-      navigate('/admin/instructor');
+      console.log("The Instructor has been developed successfully");
+      navigate('/admin/instructor')
     } catch (error) {
       console.log(error.message);
       navigate('/');

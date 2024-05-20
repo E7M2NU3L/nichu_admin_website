@@ -9,7 +9,7 @@ import { Logout } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import authService from '../../api/auth/Auth';
 import { useDispatch, useSelector } from 'react-redux';
-import { AuthStatus, logout } from '../../slice/authSlice';
+import {authStatus, logout } from '../../slice/authSlice';
 
 const style = {
   position: 'absolute',
@@ -29,7 +29,7 @@ export default function LogoutModal() {
   const handleClose = () => setOpen(false);
   const navigate = useNavigate();
 
-  const logoutStatus = useSelector(AuthStatus);
+  const logoutStatus = useSelector(authStatus);
   console.log(logoutStatus);
 
   const dispatch = useDispatch();

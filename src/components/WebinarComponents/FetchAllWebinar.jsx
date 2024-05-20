@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import DeleteWebinar from './DeleteWebinar'
 import { formatDistance } from 'date-fns';
 import DisplayAPI from './utils/DisplayAPI'
+import webinarBucket from '../../api/bucket/WebinarsBucket'
 
 const FormattedDate = ( isoDate ) => {
     try {
@@ -25,9 +26,13 @@ const FormattedDate = ( isoDate ) => {
     }
 };
 
-
 const FetchAllWebinar = ({content}) => {
+  const getImageDsta = async (ImageFile) => {
+    const Image = await webinarBucket.GetWebinarImagePreview(ImageFile);
+    console.log(Image);
+  }
 
+  
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

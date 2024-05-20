@@ -22,7 +22,7 @@ const HEro = () => {
                 </h2>
                 <Button className="bt-3 bg-dark-1 text-dark-3 hover:text-dark-1 transition-colors duration-200 ease-in-out" variant='contained'>
                     <Link to="/admin/dashboard">
-                        Dashboard
+                        Get Started
                     </Link>
                 </Button>
             </div>

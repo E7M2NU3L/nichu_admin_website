@@ -9,7 +9,6 @@ import AdminUsers from './components/AuthComponents/AdminUsers';
 import FooterUtil from './utils/Footer/FooterUtil';
 import NavbarUtil from './utils/Navbar/NavbarUtil';
 import Home from './pages/Home/Home';
-import Dashboard from './pages/Dashboard/Dashboard';
 import Create from './pages/Courses/Create';
 import FetchSingleCourses from './components/CoursesComponents/FetchSingleCourses';
 import CreateI from './pages/Instructors/CreateI';
@@ -20,6 +19,10 @@ import UpdateWebinar from './components/WebinarComponents/UpdateWebinar';
 import UpdateInstructor from './components/InstructorComponents/UpdateInstructor';
 import IsAdmin from './state/IsAdmin';
 import Protected from './middleware/Protected';
+import CreateBlog from './pages/Blogs/CreateBlog';
+import UpdateBlogs from './pages/Blogs/UpdateBlogs';
+import FetchAllBlogs from './pages/Blogs/FetchAllBlogs';
+import FetchSingleBlogs from './pages/Blogs/FetchSingleBlogs';
 
 function App() {
   return (
@@ -57,7 +60,7 @@ function App() {
             <CreateI />
           </IsAdmin>
           } />
-          <Route path="/admin/instructors/single" element={
+          <Route path="/admin/instructors/single/:id" element={
           <IsAdmin>
             <FetchSingleInstructor />
           </IsAdmin>
@@ -95,13 +98,22 @@ function App() {
           </IsAdmin>
           } />
 
+          {/* Blog Creation */}
+          <Route path='/admin/blogs/create-blogs' element={
+            <CreateBlog />
+          } />
+          <Route path='/admin/blogs/update-blogs' element={
+            <UpdateBlogs />
+          } />
+          <Route path='/admin/blogs/fetch-all-blogs' element={
+            <FetchAllBlogs />
+          } />
+          <Route path='/admin/blogs/fetch-single-blog/:id' element={
+            <FetchSingleBlogs />
+          } />
+
           {/* Admin Login Route */}
           <Route path='/admin/auth/login' element={<LoginAdmin />} />
-          <Route path='/admin/dashboard' element={
-          <Protected>
-            <Dashboard />
-          </Protected>
-          } />
         </Routes>
         <FooterUtil />
       </BrowserRouter>

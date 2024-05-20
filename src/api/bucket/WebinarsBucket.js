@@ -17,12 +17,23 @@ export class WebinarBucketService {
                 ID.unique(),
                 file
             );
-            // Construct the URL of the uploaded file
-            const fileURL = `https://cloud.appwrite.io/v1/storage/buckets/65ec1f81c5d56c259bf7/files/${promise.$id}/view?project=65ec15ae94b048c5b098`;
-
-            return fileURL;
+            console.log(promise);
+           const Image = this.GetImage(promise.$id);
+            console.log(Image);
         } catch (error) {
             console.log("Error creating file"+error.message);
+            return false;
+        }
+    }
+
+    async GetImage (file) {
+        try {
+            const promise = await this.bucket.getFile(file);
+            console.log(promise);
+        } catch (error) {
+            console.log(
+                "Error Occured: "+error.message
+            );
             return false;
         }
     }

@@ -1,7 +1,7 @@
 import {Account, Client, Databases, ID} from 'appwrite';
 import authDB from '../db/AuthDb';
-import { configURL } from '../../config/Conf';
-import { AuthConfig } from '../../config/AuthConf';
+import { useDispatch } from 'react-redux';
+import { login } from '../../slice/authSlice';
 
 export class AuthService {
     client = new Client();
@@ -60,7 +60,6 @@ export class AuthService {
             
             // get the promise
             const promise = await this.account.createEmailPasswordSession(email, password);
-
             return promise;
         } catch (error) {
             console.log("Error Occured: ", error.message);

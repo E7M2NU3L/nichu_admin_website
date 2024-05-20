@@ -1,10 +1,25 @@
 import { Button, Typography } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import CoursePage from '../../assets/images/images (5).png'
 import { Link } from 'react-router-dom'
 import FetchAllCourses from '../../components/CoursesComponents/FetchAllCourses'
+import courseDB from '../../api/db/CoursesDb'
 
 const Courses = () => {
+
+  useEffect(() => {
+    const fetchCourseData = async() => {
+      try {
+        const res = await courseDB.ListAllCourses();
+        console.log(res);
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+
+    fetchCourseData();
+  }, []);
+  
   return (
     <div className='min-h-screen h-full py-[2rem] bg-dark-2'>
       <section className='flex justify-between items-center px-[1rem] max-w-[760px] mx-auto'>
