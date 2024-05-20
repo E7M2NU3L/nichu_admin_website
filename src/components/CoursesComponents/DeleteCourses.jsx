@@ -5,6 +5,7 @@ import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Typography from '@mui/material/Typography';
 import { useNavigate } from 'react-router-dom';
+import courseDB from '../../api/db/CoursesDb';
 
 const style = {
   position: 'absolute',
@@ -18,18 +19,19 @@ const style = {
   p: 4,
 };
 
-export default function DeleteCourses() {
+export default function DeleteCourses({slug}) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   const navigate = useNavigate();
 
-  const handleDelete = (e) => {
+  const handleDelete = async (e) => {
     try {
+      await courseDB.DeleteCourse(slug);
       console.log("The Course has been Successfully Deleted")
-      navigate('/admin/course')
       handleClose();
+      navigate('/admin/course')
     } catch (error) {
       console.log(error.message);
       navigate('/')

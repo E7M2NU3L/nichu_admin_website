@@ -8,6 +8,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import instructorDB from "../../api/db/InstructorsDb";
 import InstructorService from "../../api/bucket/InstructorBucket";
 import { useDropzone } from "react-dropzone";
+import Loading from "../WebinarComponents/utils/Loading";
 
 const UpdateInstructor = () => {
   const [InstructorData, setInstructorData] = useState(null);
@@ -141,55 +142,67 @@ const UpdateInstructor = () => {
   };
 
   return (
-    <main className="flex justify-center items-center min-h-screen bg-dark-2 py-[4rem]">
-      <form onSubmit={handleSubmit} className="py-[2rem] max-w-[20rem] sm:max-w-[30rem] gap-y-[1rem] flex flex-col">
-        <Typography variant="h6" className="text-dark-1 pb-[1rem] font-semibold">
-          Update <span className="text-dark-5">
-            Instructor Info
-          </span>
-        </Typography>
+    <React.Fragment>
+      {(isLoading === false && InstructorData !== null) ? (
+        <>
+           <main className="flex justify-center items-center min-h-screen bg-dark-2 py-[4rem]">
+            <form onSubmit={handleSubmit} className="py-[2rem] max-w-[20rem] sm:max-w-[30rem] gap-y-[1rem] flex flex-col">
+              <Typography variant="h6" className="text-dark-1 pb-[1rem] font-semibold">
+                Update <span className="text-dark-5">
+                  Instructor Info
+                </span>
+              </Typography>
 
-        <TextField id="outlined-basic" label="Instructor Name" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={InstructorName} onChange={handleInstructorName} />
+              <TextField id="outlined-basic" label="Instructor Name" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={InstructorName} onChange={handleInstructorName} />
 
-        <TextField id="outlined-basic" label="Portfolio URL" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={InstructorPortfolio} onChange={handleInstructorPortfolio} />
+              <TextField id="outlined-basic" label="Portfolio URL" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={InstructorPortfolio} onChange={handleInstructorPortfolio} />
 
-        <TextField id="outlined-basic" label="Instructor IG URL" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={InstructorIG} onChange={handleInstructorIG} />
+              <TextField id="outlined-basic" label="Instructor IG URL" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={InstructorIG} onChange={handleInstructorIG} />
 
-        <TextField id="outlined-basic" label="Instructor LinkedIN URL" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={InstructorLinkedIn} onChange={handleInstructorLinkedIn} />
+              <TextField id="outlined-basic" label="Instructor LinkedIN URL" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={InstructorLinkedIn} onChange={handleInstructorLinkedIn} />
 
-        <main className='pb-[1rem]'>
-          <Typography className='font-semibold text-dark-1' variant="p">
-            Instructor Description
-          </Typography>
-          <ReactQuill theme="snow" value={Description} onChange={handleDescription} className='border border-dark-1 outline-none' />
-        </main>
+              <main className='pb-[1rem]'>
+                <Typography className='font-semibold text-dark-1' variant="p">
+                  Instructor Description
+                </Typography>
+                <ReactQuill theme="snow" value={Description} onChange={handleDescription} className='border border-dark-1 outline-none' />
+              </main>
 
-        <main>
-        <Typography className='text-dark-1 font-semibold' variant='p'>
-           Upload Instructor Profile Page
-        </Typography>
-            <div {...getRootProps()} className={`dropzone ${isDragActive ? 'active' : ''}`}>
-                <input {...getInputProps()} />
-                <p>{isDragActive ? 'Drop files here...' : 'Drag & drop files here, or click to select files'}</p>
+              <main>
+              <Typography className='text-dark-1 font-semibold' variant='p'>
+                Upload Instructor Profile Page
+              </Typography>
+                  <div {...getRootProps()} className={`dropzone ${isDragActive ? 'active' : ''}`}>
+                      <input {...getInputProps()} />
+                      <p>{isDragActive ? 'Drop files here...' : 'Drag & drop files here, or click to select files'}</p>
 
-                {files.length > 0 && (
-                    <div className="preview-container">
-                    {files.map((file, index) => (
-                    <div key={index} className="preview-item">
-                    <img src={file.preview} alt={file.name} />
-                    <button onClick={() => handleRemoveFile(index)}>Remove</button>
-                </div>
-            ))}
-            </div>
-        )}
-        </div>
-    </main>
+                      {files.length > 0 && (
+                          <div className="preview-container">
+                          {files.map((file, index) => (
+                          <div key={index} className="preview-item">
+                          <img src={file.preview} alt={file.name} />
+                          <button onClick={() => handleRemoveFile(index)}>Remove</button>
+                      </div>
+                  ))}
+                  </div>
+              )}
+              </div>
+          </main>
 
-        <Button type="submit" variant="contained" className="bg-dark-1 text-dark-2 flex justify-center w-1/2">
-          Update
-        </Button>
-      </form>
-    </main>
+              <Button type="submit" variant="contained" className="bg-dark-1 text-dark-2 flex justify-center w-1/2">
+                Update
+              </Button>
+            </form>
+          </main>
+        </>
+      ) : (
+        <>
+          <main className="min-h-[90vh] w-full bg-dark-2 flex justify-center items-center">
+            <Loading />
+          </main>
+        </>
+      )}
+    </React.Fragment>
   );
 };
 

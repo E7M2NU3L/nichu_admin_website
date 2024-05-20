@@ -1,35 +1,79 @@
 import React, { useState, useEffect } from 'react';
 import { Typography } from '@mui/material';
-import axios from 'axios'; // Import axios or any other 
 import Loading from './utils/Loading';
 import PlaceHolder from '../../assets/images/images (3).png'
 import { Link } from 'react-router-dom';
+import courseDB from '../../api/db/CoursesDb';
+import CourseBucket from '../../api/bucket/CoursesBucket';
 
 const FetchSingleCourses = () => {
-    const [courseData, setCourseData] = useState(null);
+    const [courseData, setInstructor] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-
+  
+    const [loading, setLoading] = useState(false);
+    const [Image, loadedImage] = useState(null);
+  
     // Fetch course data based on the courseId
     const fetchCourseData = async () => {
         try {
-            // Replace the URL with your API endpoint for fetching course data
-            // const response = await axios.get(`http://api.example.com/courses/${courseId}`);
-            const response = {
-              data : 'success'
-            }
-            setCourseData(response.data);
+            // Get the current URL path from window.location.pathname
+            const urlPath = window.location.pathname;
+  
+            // Split the path into an array of segments using the '/' separator
+            const pathSegments = urlPath.split('/');
+  
+            // The last segment is the last part of the array
+            const id = pathSegments[pathSegments.length - 1];
+  
+            // Output the extracted ID
+            console.log('Extracted ID:', id);
+            const response = await courseDB.ListCourse(
+                id
+            );
+            console.log(response);
+            setInstructor(response);
         } catch (error) {
             console.error('Failed to fetch course data:', error);
         } finally {
             setIsLoading(false);
         }
     };
-
+  
     // Use effect to fetch course data when component mounts
     useEffect(() => {
         fetchCourseData();
+        console.log(courseData);
     }, []);
-
+  
+    const getImage = async () => {
+      try {
+          const promise = await CourseBucket.GetCourseThumbnail(courseData?.Course_Thumbnail);
+          console.log(promise);
+          return promise;
+      } catch (error) {
+          console.log("Error Occured: "+ error.message);
+          setLoading(false);
+      }
+  }
+  
+  useEffect(() => {
+      const loadImage = async () => {
+        try {
+          const response = await getImage();
+          if (response) {
+            console.log(response);
+            loadedImage(response);
+            setLoading(false);
+          }
+        } catch (error) {
+          console.log('Error occurred: ' + error.message);
+          setLoading(true);
+        }
+      };
+  
+      // Call the async function
+      loadImage();
+    }, [courseData])
     // Display loading spinner if data is still being fetched
     if (isLoading) {
         return <Loading />;
@@ -54,7 +98,7 @@ const FetchSingleCourses = () => {
 
                 <Link to="/admin/course/update">
                 <button className='text-dark-2 bg-dark-1 hover:bg-gradient-to-tr hover:from-dark-3 hover:to-dark-4 hover:text-dark-1 px-4 py-1 rounded-lg font-semibold hover:t-dark-4 transition-all duration-200 ease-in-out'>
-Edit
+                    Edit
                 </button>
                 </Link>
                 </section>

@@ -27,7 +27,7 @@ const HEro = () => {
                 </Button>
             </div>
 
-            <div className="max-w-[40vh] max-h-[40vh] flex relative">
+            <div className="max-w-[35vh] sm:max-w-[40vh]  max-h-[40vh] flex relative">
                 <img src={HeroImg} alt='hero-logo' className='relative rounded-full shadow-md shadow-blue-400' />
                 <img src={HeroImg1} alt='supporter-1' className='absolute bottom-[-10px] right-[-40px] w-[7rem] h-[7rem]' />
                 <img src={HeroImg2} alt='supporter-2' className='absolute top-[-20px] left-[-40px] w-[7rem] h-[7rem]' />
