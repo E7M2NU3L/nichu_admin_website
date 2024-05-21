@@ -40,6 +40,8 @@ export class BlogDbService {
 
     async updateBlog(slug, {Title ,Description, Image}){
         try {
+            console.log("Data from the frontend: ");
+            console.log(slug, {Title ,Description, Image})
             const promise = await this.database.updateDocument( "65ec182e15ec8ffdec9d",
             "664881b900085cca30ad",slug, {
                 Title,

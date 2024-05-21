@@ -34,15 +34,14 @@ export default function DrawerRight() {
   console.log(auth);
 
 const Iconset = [
-    <Person />,
     <GolfCourse />,
     <WebOutlined />,
     <Person2Outlined />,
     <PresentToAll />
 ];
 
-const labels = ['Users', 'Courses', 'Webinars', 'Instructors', "Blogs"];
-const links = ['/admin/users', '/admin/course', '/admin/webinars', '/admin/instructor', '/admin/blogs/fetch-all-blogs']
+const labels = [ 'Courses', 'Webinars', 'Instructors', "Blogs"];
+const links = [ '/admin/course', '/admin/webinars', '/admin/instructor', '/admin/blogs/fetch-all-blogs']
 
 const arrayOfObjects = labels.map((label, index) => ({
     text: label,

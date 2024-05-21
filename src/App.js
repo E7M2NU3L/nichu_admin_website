@@ -102,7 +102,7 @@ function App() {
           <Route path='/admin/blogs/create-blogs' element={
             <CreateBlog />
           } />
-          <Route path='/admin/blogs/update-blogs' element={
+          <Route path='/admin/blogs/update-blogs/:id' element={
             <UpdateBlogs />
           } />
           <Route path='/admin/blogs/fetch-all-blogs' element={

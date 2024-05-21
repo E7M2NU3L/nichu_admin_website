@@ -1,27 +1,28 @@
 import { Client, ID, Storage } from "appwrite";
 
-export class CourseBucketService {
-    client = new Client();
+class Introbucket{
+    client;
     bucket;
 
     constructor(){
         this.client.setEndpoint("https://cloud.appwrite.io/v1");
         this.client.setProject("65ec15ae94b048c5b098");
-        this.bucket =  new Storage(this.client);
+        this.bucket = new Storage(this.client);
     }
 
-    async FileUpload(file) {
+    async CreateVideo(video) {
         try {
-            const response = this.bucket.createFile(
+            const promise = await this.bucket.createFile(
                 "65ec1f63377d0d0d79c3",
                 ID.unique(),
-                file
-            )
-            if(response) {
-                console.log(response);
+                video
+            );
+
+            if(promise) {
+                console.log(promise);
                 const projectEndpoint = "https://cloud.appwrite.io/v1"
                 const ProjectId = "65ec15ae94b048c5b098"
-                const fileId = response.$id
+                const fileId = promise.$id
                 const bucketId = "65ec1f63377d0d0d79c3"
                 const fileURL = `${projectEndpoint}/storage/buckets/${bucketId}/files/${fileId}/view?project=${ProjectId}&mode=admin`
                 return fileURL;
@@ -30,13 +31,11 @@ export class CourseBucketService {
                 return "No response";
             }
         } catch (error) {
-            console.log(
-                "Error Occured: ",error.message
-            );
+            console.error(error.message);
             return false;
         }
     }
 }
 
-const VideoBucketService = new CourseBucketService();
-export default VideoBucketService;
+const intro_bucket = new Introbucket();
+export default intro_bucket;

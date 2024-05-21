@@ -26,11 +26,6 @@ const NavbarUtil = () => {
       
       <ul className='sm:flex items-center gap-x-[2rem] justify-center hidden'>
         <li className='text-md text-dark-2 font-semibold hover:translate-x-1 hover:scale-105 transition-all duration-300 ease-in-out'>
-          <Link className='' to="/admin/users">
-            Users
-          </Link>
-        </li>
-        <li className='text-md text-dark-2 font-semibold hover:translate-x-1 hover:scale-105 transition-all duration-300 ease-in-out'>
           <Link className='' to="/admin/course">
             Courses
           </Link>

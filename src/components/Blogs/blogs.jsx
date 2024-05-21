@@ -14,7 +14,8 @@ const CardBlog = ({blog}) => {
     console.log(blog);
     const getImage = async () => {
       try {
-        const Image = await blog_bucket.GetImage(blog.Image);
+        console.log(blog);
+        const Image = blog.Image;
         console.log(Image)
         setImage(Image);
         setImgLoad(false);

@@ -45,9 +45,10 @@ export class CourseDatabaseService {
         Course_name, 
         Course_Duration,
         Description,
-        Course_thumbnail,
-        Course_Instructor,
-        video
+        instructors,
+        Course_Thumbnail,
+        tags,
+        CourseType
     }){
         try {
             const promise = await this.database.createDocument(
@@ -58,16 +59,20 @@ export class CourseDatabaseService {
                     Course_name, 
                     Course_Duration,
                     Description,
-                    Course_thumbnail : CourseBucket.CreateCourseThumbnail(Course_thumbnail),
-                    Course_Instructor,
-                    Course_Video_URL: CourseBucket.CreateCourseVideos(video)
+                    Course_Thumbnail,
+                    instructors,
+                    tags: [
+                        tags
+                    ],
+                    Course_ID: ID.unique(),
+                    CourseType
                 }
             )
 
             return promise;
         } catch (error) {
             console.log(
-                "Error Occured: ",error.nessage
+                "Error Occured: ",error.message
             );
             return false;
         }

@@ -15,7 +15,7 @@ export class CourseBucketService {
     async CreateCourseThumbnail(file){
         try {
             const promise = await this.bucket.createFile(
-                configURL.appwrite_bucket_courses_id,
+                "65ec1f63377d0d0d79c3",
                 ID.unique(),
                 file
             )
@@ -29,7 +29,7 @@ export class CourseBucketService {
     async CreateCourseVideos(video){
         try {
             const promise = await this.bucket.createFile(
-                configURL.appwrite_bucket_courses_id,
+                "65ec1f63377d0d0d79c3",
                 ID.unique(),
                 video
             )
@@ -43,7 +43,7 @@ export class CourseBucketService {
     async GetCourseThumbnailPreview(slug){
         try {
             const promise = await this.bucket.getFilePreview(
-                configURL.appwrite_bucket_courses_id,
+                "65ec1f63377d0d0d79c3",
                 slug
             )
             return promise;
@@ -56,10 +56,21 @@ export class CourseBucketService {
     async GetCourseThumbnail(slug){
         try {
             const promise = await this.bucket.getFile(
-                configURL.appwrite_bucket_courses_id,
+                "65ec1f63377d0d0d79c3",
                 slug
             )
-            return promise;
+            if(promise) {
+                console.log(promise);
+                const projectEndpoint = "https://cloud.appwrite.io/v1"
+                const ProjectId = "65ec15ae94b048c5b098"
+                const fileId = promise.$id
+                const bucketId = "65ec1f63377d0d0d79c3"
+                const fileURL = `${projectEndpoint}/storage/buckets/${bucketId}/files/${fileId}/view?project=${ProjectId}&mode=admin`
+                return fileURL;
+            }
+            else {
+                return "No response";
+            }
         } catch (error) {
             console.log("Error creating thumbnail: ", error.message);
             return false;
@@ -69,7 +80,7 @@ export class CourseBucketService {
     async GetCourseVideos(slug){
         try {
             const promise = await this.bucket.getFile(
-                configURL.appwrite_bucket_courses_id,
+                "65ec1f63377d0d0d79c3",
                 slug
             )
             return promise;
@@ -82,7 +93,7 @@ export class CourseBucketService {
     async UpdateCoutseThumbnail(slug, file) {
         try {
             const promise = await this.bucket.updateFile(
-                configURL.appwrite_bucket_courses_id,
+                "65ec1f63377d0d0d79c3",
                 slug,
                 file
             )
@@ -96,7 +107,7 @@ export class CourseBucketService {
     async UpdateCourseVidee(slug, videoa){
         try {
             const promise = await this.bucketupdateFile(
-                configURL.appwrite_bucket_courses_id,
+                "65ec1f63377d0d0d79c3",
                 slug,
                 [videoa]
             )
@@ -110,7 +121,7 @@ export class CourseBucketService {
     async DeleteCourseThumbnail(slug){
         try {
             const promise = await this.bucket.deleteFile(
-                configURL.appwrite_bucket_courses_id,
+                "65ec1f63377d0d0d79c3",
                 slug
             )
             return promise;
@@ -123,7 +134,7 @@ export class CourseBucketService {
     async DeleteCourseVideo(slug){
         try {
             const promise = await this.bucket.deleteFile(
-                configURL.appwrite_bucket_courses_id,
+                "65ec1f63377d0d0d79c3",
                 slug
             )
             return promise;

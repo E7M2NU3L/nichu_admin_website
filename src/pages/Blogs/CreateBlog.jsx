@@ -46,10 +46,12 @@ const CreateBlog = () => {
       const image_upload = await blog_bucket.UploadImage(files[0]);
       console.log(image_upload);
 
-      const fileId = image_upload ? image_upload.$id : ''
+      const fileId = image_upload ? image_upload.$id : '';
+
+      const file = await blog_bucket.GetImage(fileId);
 
       const res = await blogs_db.createBlog(
-        {Title: title, Description: Description, Image: fileId}
+        {Title: title, Description: Description, Image: file}
       );
       console.log(res);
 
