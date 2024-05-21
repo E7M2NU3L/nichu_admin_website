@@ -3,7 +3,10 @@ import { Typography } from '@mui/material';
 import Loading from './utils/Loading';
 import { Link } from 'react-router-dom';
 import webinarDB from '../../api/db/WebinarsDb';
-import { formatDistance } from 'date-fns';
+import { formatDistance, set } from 'date-fns';
+import webinarBucket from '../../api/bucket/WebinarsBucket';
+import InstructorService from '../../api/bucket/InstructorBucket';
+import PlaceHolder from '../../assets/images/images (3).png'
 
 const FormattedDate = ( isoDate ) => {
     try {
@@ -27,6 +30,59 @@ const FormattedDate = ( isoDate ) => {
 const FetchSingleWebinar = ( ) => {
     const [webinarData, setWebinarData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+
+    const [img_url, setImgURL] = useState(null);
+    const [loadingIMg, setloadingIMg] = useState(PlaceHolder);
+    const getImage = async() => {
+        try {
+            const Image = await InstructorService.GetInstructorImage(webinarData.instructor.Instructor_Photo);
+            console.log(" Image url " +Image);
+            return Image;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        try {
+            const promise = getImage();
+            if (promise){
+                setImgURL(promise);
+                console.log(img_url);
+                setloadingIMg(false);
+            }
+        } catch (error) {
+            console.log(error);
+            setIsLoading(true);
+        }
+    }, [webinarData]);
+
+    const [Thumbnail, setThumbnail] = useState(null);
+    const [LoadingThumbnail, setLoadingThumbnail] = useState(PlaceHolder);
+
+    const getthumbnail = async() => {
+        try {
+            const Image = await webinarBucket.GetImage(webinarData.Webinar_Thumbnail);
+            console.log(" Thumbnail url " +Image);
+            return Image;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        try {
+            const promise = getthumbnail();
+            if (promise){
+                setThumbnail(promise);
+                console.log(img_url);
+                setLoadingThumbnail(false);
+            }
+        } catch (error) {
+            console.log(error);
+            setLoadingThumbnail(true);
+        }
+    }, [webinarData]);
 
     // Fetch course data based on the courseId
     const fetchWebinarData = async () => {
@@ -63,16 +119,26 @@ const FetchSingleWebinar = ( ) => {
     // Render the course details once data is available
     return (
         <>
-            {(isLoading !== true && webinarData !== null) ? (
+            {(isLoading !== true && webinarData !== null && Thumbnail !== null && LoadingThumbnail === false && loadingIMg === false && img_url !== null) ? (
                 <React.Fragment>
-                    <div className='flex flex-col justify-center items-center w-full min-h-screen py-[1.4rem] bg-dark-2'>
-                        <section>
-                            <img
-                                src={webinarData.Webinar_Thumbnail}
+                    <div className='flex flex-col sm:flex-row justify-center items-center w-full min-h-screen py-[1.4rem] bg-dark-2'>
+                        <React.Fragment>
+                            {(Thumbnail !== null && LoadingThumbnail === false) ? (
+                                <>
+                                    <img
+                                src={Thumbnail}
                                 alt='Course Thumbnail'
                                 className='max-w-[50rem] w-screen object-fill h-[30rem]'
                             />
-                        </section>
+                                </>
+                            ) : (
+                                <>
+                                <main className='justify-center items-center w-full h-full flex'>
+                                    <Loading />
+                                </main>
+                                </>
+                            )}
+                        </React.Fragment>
 
                         <section className='pt-[3rem] px-[3rem] max-w-[50rem]'>
                             <section className='items-center justify-between flex w-full'>
@@ -88,14 +154,28 @@ const FetchSingleWebinar = ( ) => {
                             </section>
 
                             <main className='w-full px-2 justify-between items-center flex'>
-                                <Typography className='text-md text-dark-1 opacity-80' variant='h6'>
-                                    {webinarData.instructors}
-                                </Typography>
+                                <React.Fragment>
+                                {(loadingIMg === false && img_url !== null) ? (
+                                    <>
+                                        <Link to={`/admin/instructors/single/${webinarData.instructor.$id} `} className=''>
+                                        <img src={img_url} className='rounded-full h-16 w-16 cursor-pointer' />
+                                        </Link>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Loading />
+                                    </>
+                                )}
+                                </React.Fragment>
 
                                 <Typography className='text-md text-dark-1 opacity-80' variant='h6'>
                                     {FormattedDate(webinarData.Webinar_Date)}
                                 </Typography>
                             </main>
+
+                            <Typography className='' variant='h5'>
+                                {webinarData.instructor.Instructor_Name}
+                            </Typography>
 
                             <main>
                             <Typography className='text-md text-dark-1 opacity-80' variant='p'>
@@ -107,7 +187,7 @@ const FetchSingleWebinar = ( ) => {
                             {webinarData.Webinar_Description}
                             </Typography>
 
-                            <Typography variant='h5' className='text-dark-2 px-3 py-1 rounded-lg shadow-md shadow-dark-4 font-normal bg-dark-1'>
+                            <Typography variant='h5' className='text-dark-2 px-3 py-1 rounded-lg shadow-md shadow-dark-4 font-normal bg-dark-1 mt-[2rem]'>
                                 <a href={webinarData.Webinar_URL}>
                                     Link to Join
                                 </a>

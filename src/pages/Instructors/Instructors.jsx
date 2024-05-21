@@ -46,16 +46,11 @@ const Instructors = () => {
         <React.Fragment>
           <div className='min-h-screen bg-dark-2'>
             <section className='flex justify-between items-center px-[1rem] max-w-[760px] mx-auto'>
-              <Typography variant='h3' style={{
-                fontWeight: "700",
-                fontFamily: "'lato', sans-serif"
-              }}
-              className='underline text-dark-1'
-              >
+              <h1 className='text-dark-1 underline text-2xl sm:text-3xl'>
                 Instructors
-              </Typography>
+              </h1>
 
-              <img src={CoursePage} alt='users-section'  className='w-[10rem] h-[12rem]'/>
+              <img src={CoursePage} alt='users-section'  className='w-[7rem] h-[10rem] sm:w-[10rem] sm:h-[12rem]'/>
             </section>
 
             <section className='w-full justify-end flex px-[1rem]'>

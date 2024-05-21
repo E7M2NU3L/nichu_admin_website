@@ -1,4 +1,5 @@
 import { Client, Storage, ID } from "appwrite";
+
 export class WebinarBucketService {
     client = new Client();
     bucket;
@@ -18,8 +19,7 @@ export class WebinarBucketService {
                 file
             );
             console.log(promise);
-           const Image = this.GetImage(promise.$id);
-            console.log(Image);
+            return promise.$id;
         } catch (error) {
             console.log("Error creating file"+error.message);
             return false;
@@ -28,8 +28,17 @@ export class WebinarBucketService {
 
     async GetImage (file) {
         try {
-            const promise = await this.bucket.getFile(file);
+            console.log(file);
+            const promise = await this.bucket.getFile(
+                "65ec1f75a350016f6f24",
+                file);
             console.log(promise);
+            const projectEndpoint = "https://cloud.appwrite.io/v1"
+            const ProjectId = "65ec15ae94b048c5b098"
+            const bucketId = "65ec1f75a350016f6f24"
+            const fileId = promise.$id
+            const fileURL = `${projectEndpoint}/storage/buckets/${bucketId}/files/${fileId}/view?project=${ProjectId}&mode=admin`
+            return fileURL;
         } catch (error) {
             console.log(
                 "Error Occured: "+error.message

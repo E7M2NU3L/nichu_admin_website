@@ -5,31 +5,19 @@ import './utils/main.css';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import "react-datepicker/dist/react-datepicker.css";
-import instructorDB from "../../api/db/InstructorsDb";
-import InstructorService from "../../api/bucket/InstructorBucket";
 import { useDropzone } from "react-dropzone";
 import Loading from "../CoursesComponents/utils/Loading";
+import webinarBucket from "../../api/bucket/WebinarsBucket";
+import webinarDB from "../../api/db/WebinarsDb";
 
-const UpdateInstructor = () => {
-  const [InstructorData, setInstructorData] = useState(null);
+const UpdateWebinar = () => {
+  const [webinarData, setWebinarData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  const [loading, setLoading] = useState(false);
-  const [Image, setImage] = useState(null);
-
-  const getImage = async () => {
-    try {
-      const promise = await InstructorService.GetInstructorImage(InstructorData?.Instructor_Photo);
-      console.log(promise);
-      return promise;
-    } catch (error) {
-      console.log("Error Occured: " + error.message);
-      setLoading(false);
-    }
-  };
-
+  const [image, setImage] = useState(null);
   const [files, setFiles] = useState([]);
-  
+
+  const navigate = useNavigate();
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles) => {
       setFiles(
@@ -47,92 +35,78 @@ const UpdateInstructor = () => {
     setFiles(updatedFiles);
   };
 
-  // Fetch instructor data based on the instructorId
-  const fetchInstructorData = async () => {
+  const getImage = async () => {
     try {
-      // Get the current URL path from window.location.pathname
+      const promise = await webinarBucket.GetImage(webinarData?.Webinar_Thumbnail);
+      console.log(promise);
+      return promise;
+    } catch (error) {
+      console.log("Error Occurred: " + error.message);
+      setIsLoading(false);
+    }
+  };
+
+  const fetchWebinarData = async () => {
+    try {
       const urlPath = window.location.pathname;
-
-      // Split the path into an array of segments using the '/' separator
       const pathSegments = urlPath.split('/');
-
-      // The last segment is the last part of the array
       const id = pathSegments[pathSegments.length - 1];
 
-      // Output the extracted ID
-      console.log('Extracted ID:', id);
-      const response = await instructorDB.FetchSingleInstructor(id);
-      console.log(response);
-      setInstructorData(response);
+      const response = await webinarDB.FetchSingleWebinars(id);
+      console.log("Webinar: ", response);
+      setWebinarData(response);
     } catch (error) {
-      console.error('Failed to fetch instructor data:', error);
+      console.error('Failed to fetch webinar data:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Use effect to fetch instructor data when component mounts
   useEffect(() => {
-    fetchInstructorData();
+    fetchWebinarData();
   }, []);
 
   useEffect(() => {
-    if (InstructorData) {
-      setDescription(InstructorData.Instructor_Description || "");
-      setInstructorName(InstructorData.Instructor_Name || "");
-      setInstructorPortfolio(InstructorData.Instructor_Portfolio || "");
-      setInstructorLinkedIn(InstructorData.Instructor_Linked_in || "");
-      setInstructorIG(InstructorData.Instructor_IG || "");
+    if (webinarData) {
+      setWebinarName(webinarData.Webinar_Name || "");
+      setWebinarDate(webinarData.Webinar_Date || "");
+      setWebinarDuration(webinarData.Duration || "");
+      setWebinarDescription(webinarData.Webinar_Description || "");
+      setWebinarInstructor(webinarData.instructors || "");
       getImage().then((image) => setImage(image));
     }
-  }, [InstructorData]);
+  }, [webinarData]);
 
-  const [InstructorName, setInstructorName] = useState('');
-  const [InstructorPortfolio, setInstructorPortfolio] = useState('');
-  const [Description, setDescription] = useState('');
-  const [InstructorLinkedIn, setInstructorLinkedIn] = useState('');
-  const [InstructorIG, setInstructorIG] = useState('');
+  const [webinarName, setWebinarName] = useState('');
+  const [webinarDate, setWebinarDate] = useState('');
+  const [webinarDuration, setWebinarDuration] = useState('');
+  const [webinarDescription, setWebinarDescription] = useState('');
+  const [webinarInstructor, setWebinarInstructor] = useState('');
 
-  const handleInstructorName = (e) => setInstructorName(e.target.value);
-  const handleInstructorPortfolio = (e) => setInstructorPortfolio(e.target.value);
-  const handleInstructorIG = (e) => setInstructorIG(e.target.value);
-  const handleInstructorLinkedIn = (e) => setInstructorLinkedIn(e.target.value);
-  const handleDescription = (content) => setDescription(content);
-
-  const navigate = useNavigate();
+  const handleWebinarName = (e) => setWebinarName(e.target.value);
+  const handleWebinarDate = (e) => setWebinarDate(e.target.value);
+  const handleWebinarDuration = (e) => setWebinarDuration(e.target.value);
+  const handleWebinarInstructor = (e) => setWebinarInstructor(e.target.value);
+  const handleDescription = (content) => setWebinarDescription(content);
 
   const handleSubmit = async(e) => {
     e.preventDefault();
     try {
-      console.log(
-        InstructorName,
-        InstructorIG,
-        InstructorLinkedIn,
-        InstructorPortfolio,
-        Description
-      );
-      const fileId = await getImage()
-      console.log(fileId);
-      console.log(files[0]);
-      const response = await InstructorService.CreateInstructorImage(files[0]);
-      console.log("Updated Image: ", response);
+      const response = files[0] ? await webinarBucket.CreateWebinarImage(files[0]) : null;
+      const file = response ? await webinarBucket.GetWebinarImage(response) : webinarData.Webinar_Thumbnail;
 
-      const file = await InstructorService.GetInstructorImage(response);
-      console.log(file);
-
-      const promise = await instructorDB.updateInstructor(
-        InstructorData.$id, {
-          InstructorName,
-          Description,
-          InstructorPortfolio,
-          InstructorLinkedIn,
-          InstructorIG,
-          Instructor_Photo: file || ""
+      const promise = await webinarDB.updateWebinar(
+        webinarData.$id, {
+          Webinar_Name: webinarName,
+          Webinar_Date: webinarDate,
+          Duration: webinarDuration,
+          Webinar_Description: webinarDescription,
+          Webinar_Thumbnail: file || ""
         }
       );
       console.log("Updated: ", promise);
-      console.log("The Instructor has been updated successfully");
-      navigate('/admin/instructor');
+      console.log("The Webinar has been updated successfully");
+      navigate('/admin/webinar');
     } catch (error) {
       console.log(error.message);
       navigate('/');
@@ -148,28 +122,25 @@ const UpdateInstructor = () => {
       <form onSubmit={handleSubmit} className="py-[2rem] max-w-[20rem] sm:max-w-[30rem] gap-y-[1rem] flex flex-col">
         <Typography variant="h6" className="text-dark-1 pb-[1rem] font-semibold">
           Update <span className="text-dark-5">
-            Instructor Info
+            Webinar Info
           </span>
         </Typography>
 
-        <TextField id="outlined-basic" label="Instructor Name" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={InstructorName} onChange={handleInstructorName} />
-
-        <TextField id="outlined-basic" label="Portfolio URL" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={InstructorPortfolio} onChange={handleInstructorPortfolio} />
-
-        <TextField id="outlined-basic" label="Instructor IG URL" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={InstructorIG} onChange={handleInstructorIG} />
-
-        <TextField id="outlined-basic" label="Instructor LinkedIN URL" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={InstructorLinkedIn} onChange={handleInstructorLinkedIn} />
+        <TextField id="webinar-name" label="Webinar Name" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={webinarName} onChange={handleWebinarName} />
+        <TextField id="webinar-date" label="Webinar Date" variant="outlined" type='date' required={true} className="text-field pb-[1rem]" value={webinarDate} onChange={handleWebinarDate} />
+        <TextField id="webinar-duration" label="Webinar Duration" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={webinarDuration} onChange={handleWebinarDuration} />
+        <TextField id="webinar-instructor" label="Instructor Name" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={webinarInstructor} onChange={handleWebinarInstructor} />
 
         <main className='pb-[1rem]'>
           <Typography className='font-semibold text-dark-1' variant="p">
-            Instructor Description
+            Webinar Description
           </Typography>
-          <ReactQuill theme="snow" value={Description} onChange={handleDescription} className='border border-dark-1 outline-none' />
+          <ReactQuill theme="snow" value={webinarDescription} onChange={handleDescription} className='border border-dark-1 outline-none' />
         </main>
 
         <main>
           <Typography className='text-dark-1 font-semibold' variant='p'>
-            Upload Instructor Profile Page
+            Upload Webinar Thumbnail
           </Typography>
           <div {...getRootProps()} className={`dropzone ${isDragActive ? 'active' : ''}`}>
             <input {...getInputProps()} />
@@ -196,4 +167,4 @@ const UpdateInstructor = () => {
   );
 };
 
-export default UpdateInstructor;
+export default UpdateWebinar;

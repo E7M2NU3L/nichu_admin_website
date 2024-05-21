@@ -1,26 +1,28 @@
-import { Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material"
-import React, { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import './utils/main.css'
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import webinarBucket from "../../api/bucket/WebinarsBucket";
 import { useDropzone } from "react-dropzone";
 import webinarDB from "../../api/db/WebinarsDb";
+import instructorDB from "../../api/db/InstructorsDb";
+import Loading from "./utils/Loading";
+import webinarBucket from "../../api/bucket/WebinarsBucket";
+import { Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
+import ReactQuill from "react-quill";
 
 const CreateWebinar = () => {
-
   const [WebinarName, setWebinarName] = useState('');
   const [Instructor, setInstructor] = useState('');
-  const [startDate, setStartDate] = useState(new Date());
+  const [webinarDate, setStartDate] = useState(new Date());
   const [CourseURL, setCourseURL] = useState('');
   const [Description, setDescription] = useState('');
   const [Duration, setDuration] = useState('');
-
   const [files, setFiles] = useState([]);
-  
+  const [Instructors, setInstructors] = useState(null);
+
+  const handleWebinarDate = (e) => setStartDate(e.target.value);
+  const navigate = useNavigate();
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles) => {
       setFiles(
@@ -33,123 +35,99 @@ const CreateWebinar = () => {
     },
   });
 
-  const handleRemoveFile = (index) => {
-    const updatedFiles = files.filter((_, i) => i !== index);
-    setFiles(updatedFiles);
-  };
+  useEffect(() => {
+    const fetchInstructors = async() => {
+      try {
+        const promise = await instructorDB.FetchAllInstructors();
+        if (promise.documents) {
+          setInstructors(promise.documents);
+        } else {
+          throw new Error("No instructors found");
+        }
+      } catch (error) {
+        console.error("Error fetching instructors: ", error.message);
+      }
+    };
 
-  const handleWebinarName = (e) => setWebinarName(e.target.value);
-  const handleInstructor = (e) => setInstructor(e.target.value);
-  const handleCourseURL = (e) => setCourseURL(e.target.value);
-  const handleDate = (e) => setStartDate(e);
-  const handleDuration = (e) => setDuration(e.target.value);
-  const handleDescription = (content, delta, source, editor) => setDescription(content);
+    fetchInstructors();
+  }, []);
 
-  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log(
-        WebinarName,
-        Instructor,
-        startDate,
-        CourseURL,
-        Description
-      )
+      const response = await webinarBucket.CreateWebinarThumbnail(files[0]);
+      const webinarThumbnail = response ? response : "";
 
-      const response = await webinarBucket.CreateWebinarThumbnail(
-        files[0]
-      )
+      const promise = await webinarDB.CreateWebinar({
+        Webinar_Name: WebinarName,
+        Duration,
+        Webinar_Date: webinarDate,
+        Webinar_Thumbnail: webinarThumbnail,
+        Webinar_URL: CourseURL,
+        Webinar_Description: Description,
+        Instructor_Id: Instructor
+      });
 
-      if (response) {
-        const promise = await webinarDB.CreateWebinar({
-          Webinar_Name : WebinarName,
-          Duration : Duration,
-          Webinar_Date : startDate,
-          Webinar_Thumbnail : response,
-          Webinar_URL : CourseURL,
-          Webinar_Description : Description
-        })
+      if (promise) {
+        console.log("Webinar created successfully");
+        navigate('/admin/webinars');
+      } else {
+        throw new Error("Failed to create webinar");
       }
-      console.log("The Course has been developed successfully");
-      navigate('/admin/webinars');
     } catch (error) {
-      console.log(error.message);
+      console.error("Error creating webinar: ", error.message);
       navigate('/');
     }
-  }
+  };
 
   return (
     <main className="flex justify-center items-center min-h-screen bg-dark-2 py-[4rem]">
-
-        <form onSubmit={handleSubmit} className="py-[2rem] max-w-[20rem] sm:max-w-[30rem] gap-y-[1rem] flex flex-col">
-          <Typography variant="h6" className="text-dark-1 pb-[1rem] font-semibold">
-            Create <span className="text-dark-5">
-              Webinar
-            </span>
-          </Typography>
-          
-          <TextField id="outlined-basic" label="Webinar Name" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={WebinarName} onChange={handleWebinarName} />
-
-          <section>
-            <Typography className="text-dark-1 font-semibold">
-              Choose the Date
-            </Typography>
-          <DatePicker className="w-full outline-none hover:border-none bg-dark-2 backdrop-blur-md px-3 py-2 flex" selected={startDate} onChange={handleDate} />
-          </section>
-
-            <TextField id="outlined-basic" label="Duration (in hours)" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={Duration} onChange={handleDuration} />
-
-          <FormControl className="form-control">
-            <InputLabel id="demo-simple-select-label">Webinar Instructor</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={Instructor}
-              label="Age"
-              onChange={handleInstructor}
-            >
-              <MenuItem value={"Online"}>Nishok</MenuItem>
-              <MenuItem value={"Self Paced"}>Ronnie Coleman</MenuItem>
-              <MenuItem value={"Offline"} disabled={true}>CBUM</MenuItem>
+      <form onSubmit={handleSubmit} className="py-[2rem] max-w-[20rem] sm:max-w-[30rem] gap-y-[1rem] flex flex-col">
+        <Typography variant="h6" className="text-dark-1 pb-[1rem] font-semibold">
+          Create <span className="text-dark-5">Webinar</span>
+        </Typography>
+        <TextField label="Webinar Name" variant="outlined" required value={WebinarName} onChange={(e) => setWebinarName(e.target.value)} />
+        <section>
+          <Typography className="text-dark-1 font-semibold">Choose the Date</Typography>
+          <TextField id="webinar-date" label="Webinar Date" variant="outlined" type='date' required={true} className="text-field pb-[1rem]" value={webinarDate} onChange={handleWebinarDate} />
+         </section>
+        <TextField label="Duration (in hours)" variant="outlined" required value={Duration} onChange={(e) => setDuration(e.target.value)} />
+        {Instructors ? (
+          <FormControl>
+            <InputLabel>Webinar Instructor</InputLabel>
+            <Select value={Instructor} onChange={(e) => setInstructor(e.target.value)}>
+              {Instructors.map((instructor) => (
+                <MenuItem
+                 key={instructor.$id} value={instructor.$id}>{instructor.Instructor_Name}</MenuItem>
+              ))}
             </Select>
           </FormControl>
-
-          <main className='pb-[1rem]'>
-            <Typography className='font-semibold text-dark-1' variant="p">
-                Webinar Description
-            </Typography>
-            <ReactQuill theme="snow" value={Description} onChange={handleDescription}  className='border border-dark-1 outline-none'/>
-            </main>
-            <main>
-            <Typography className='text-dark-1 font-semibold' variant='p'>
-                Webinar Thumnail
-            </Typography>
-                <div {...getRootProps()} className={`dropzone ${isDragActive ? 'active' : ''} mt-[1rem]`}>
-                    <input {...getInputProps()} />
-                    <p>{isDragActive ? 'Drop files here...' : 'Drag & drop files here, or click to select files'}</p>
-
-                    {files.length > 0 && (
-                        <div className="preview-container">
-                        {files.map((file, index) => (
-                        <div key={index} className="preview-item">
-                        <img src={file.preview} alt={file.name} />
-                        <button onClick={() => handleRemoveFile(index)}>Remove</button>
-                    </div>
-                ))}
-                </div>
-            )}
-            </div>
+        ) : (
+          <Loading />
+        )}
+        <main className='pb-[1rem]'>
+          <Typography className='font-semibold text-dark-1'>Webinar Description</Typography>
+          <ReactQuill theme="snow" value={Description} onChange={(content) => setDescription(content)} />
         </main>
-
-          <TextField id="outlined-basic" label="Webinar URL" variant="outlined" type='text' required={true} className="text-field pb-[1rem]" value={CourseURL} onChange={handleCourseURL} />
-
-          <Button type="submit" variant="contained" className="bg-dark-1 text-dark-2 flex justify-center w-1/2">
-            Create
-          </Button>
-        </form>
+        <div {...getRootProps()} className={`dropzone ${isDragActive ? 'active' : ''} mt-[1rem]`}>
+          <input {...getInputProps()} />
+          <p>{isDragActive ? 'Drop files here...' : 'Drag & drop files here, or click to select files'}</p>
+          {files.length > 0 && (
+            <div className="preview-container">
+              {files.map((file, index) => (
+                <div key={index} className="preview-item">
+                  <img src={file.preview} alt={file.name} />
+                  <button onClick={() => setFiles(files.filter((_, i) => i !== index))}>Remove</button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        <TextField label="Webinar URL" variant="outlined" required value={CourseURL} onChange={(e) => setCourseURL(e.target.value)} />
+        <Button type="submit" variant="contained">Create</Button>
+      </form>
     </main>
-  )
-}
+  );
+};
 
-export default CreateWebinar
+export default CreateWebinar;

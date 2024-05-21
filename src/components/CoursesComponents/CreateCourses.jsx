@@ -3,11 +3,28 @@ import React, { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import FileUpload from "./utils/FileUpload";
-import VideoUpload from "./utils/VideoUpload";
-import CourseVids from "./utils/CourseVids";
+import { useDropzone } from "react-dropzone";
 
 const CreateCourses = () => {
+
+  const [files, setFiles] = useState([]);
+  
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: (acceptedFiles) => {
+      setFiles(
+        acceptedFiles.map((file) =>
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          })
+        )
+      );
+    },
+  });
+
+  const handleRemoveFile = (index) => {
+    const updatedFiles = files.filter((_, i) => i !== index);
+    setFiles(updatedFiles);
+  };
 
   const [CourseName, setCourseName] = useState('');
   const [Duration, setDuration] = useState('');
@@ -94,12 +111,26 @@ const CreateCourses = () => {
             </Typography>
             <ReactQuill theme="snow" value={Description} onChange={handleDescription}  className='border border-dark-1 outline-none'/>
         </main>
-          <FileUpload Title="Course Thumbnail" />
-          <FileUpload Title="Other Images" />
-          
-          <VideoUpload Title="Course Introduction Video" />
+        <main>
+        <Typography className='text-dark-1 font-semibold' variant='p'>
+            Course Thumbnail
+        </Typography>
+            <div {...getRootProps()} className={`dropzone ${isDragActive ? 'active' : ''}`}>
+                <input {...getInputProps()} />
+                <p>{isDragActive ? 'Drop files here...' : 'Drag & drop files here, or click to select files'}</p>
 
-          <CourseVids />
+                {files.length > 0 && (
+                    <div className="preview-container">
+                    {files.map((file, index) => (
+                    <div key={index} className="preview-item">
+                    <img src={file.preview} alt={file.name} />
+                    <button onClick={() => handleRemoveFile(index)}>Remove</button>
+                </div>
+            ))}
+            </div>
+        )}
+        </div>
+    </main>
 
           <Button type="submit" variant="contained" className="bg-dark-1 text-dark-2 flex justify-center w-1/2">
             Create

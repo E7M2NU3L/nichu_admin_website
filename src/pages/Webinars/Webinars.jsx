@@ -45,16 +45,16 @@ const Webinars = () => {
         <React.Fragment>
           <div className='min-h-screen bg-dark-2'>
             <section className='flex justify-between items-center px-[1rem] max-w-[760px] mx-auto'>
-              <Typography variant='h3' style={{
+              <Typography style={{
                 fontWeight: "700",
                 fontFamily: "'lato', sans-serif"
               }}
-              className='underline text-dark-1'
+              className='underline text-dark-1 text-2xl sm:text-4xl'
               >
                 Webinars
               </Typography>
 
-              <img src={CoursePage} alt='users-section'  className='w-[10rem] h-[12rem]'/>
+              <img src={CoursePage} alt='users-section'  className='w-[8rem] h-[10rem] sm:h-[12rem] sm:w-[10rem]'/>
             </section>
 
             <section className='w-full justify-end flex px-[1rem]'>
